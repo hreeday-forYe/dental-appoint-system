@@ -1,0 +1,6 @@
+1. Implement Authentication with activation code for both frontend and backend. 
+2. Design the Router blocking as well 
+3. Authentication for the users only with both implementation backend and frontend 
+
+
+TODO: ADD THE SMTP SERVER TO THE LIST
