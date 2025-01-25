@@ -8,8 +8,7 @@ import { fileURLToPath } from "url";
 import sendMail from "../utils/sendMail.js";
 import createActivationToken from "../utils/activation.js";
 import { sendToken } from "../utils/jwt.js";
-import cloudinary from 'cloudinary';
-
+import cloudinary from "cloudinary";
 
 const registerUser = asyncHandler(async (req, res, next) => {
   try {
@@ -104,7 +103,7 @@ const activateUser = asyncHandler(async (req, res, next) => {
       message: "User has been successfully created",
     });
   } catch (error) {
-    return next(new ErrorHandler(error.message, 400));
+    return next(new ErrorHandler(error.message, 500));
   }
 });
 
@@ -139,7 +138,7 @@ const loginUser = asyncHandler(async (req, res, next) => {
       user,
     });
   } catch (error) {
-    return next(new ErrorHandler(error.message, 400));
+    return next(new ErrorHandler(error.message, 500));
   }
 });
 
@@ -158,88 +157,117 @@ const logoutUser = asyncHandler(async (req, res, next) => {
       message: "User logged out successfully",
     });
   } catch (error) {
-    return next(new ErrorHandler(error.message, 400));
+    return next(new ErrorHandler(error.message, 500));
   }
 });
 
-const updateUserInfo = asyncHandler(async (req, res, next) => {
+const updateUserProfile = asyncHandler(async (req, res, next) => {
   try {
-    const { name, email, address, medicalIssues, phone,avatar } = req.body;
-    const userId = req.user?._id;
-    const user = await User.findById(userId).select("+password");
-
-    // Check if user exists
-    if (!user) {
-      return next(new ErrorHandler("User not found", 404));
-    }
-
-    // Verify password
-    // const isPasswordValid = await user.comparePassword(password);
-    // if (!isPasswordValid) {
-    //   return next(new ErrorHandler('Invalid password', 400));
-    // }
-
-    // Update email if provided
-    // if (email && email !== user.email) {
-    //   const isEmailExist = await User.findOne({ email });
-    //   if (isEmailExist) {
-    //     return next(new ErrorHandler('Email already exists', 400));
-    //   }
-    //   user.email = email;
-    // }
-
-    // Update name if provided
-    if (name) {
-      user.name = name;
-    }
-    if(address){
-      user.address = address;
-    }
-    if(phone){
-      user.phone = phone;
-    }
-    if(medicalIssues){
-      user.medicalissues = medicalIssues
-    }
-
-
-    if (avatar && user) {
-      // If we have one avatar then call this if
-      if (user?.avatar?.public_id) {
-        // First delete the old image
-        await cloudinary.v2.uploader.destroy(user?.avatar?.public_id);
-
-        // Then add the new image if the user already has the avatar
-        const mycloud = await cloudinary.v2.uploader.upload(avatar, {
-          folder: 'avatars',
-          width: 150,
-        });
-        user.avatar = {
-          public_id: mycloud.public_id,
-          url: mycloud.secure_url,
-        };
-      } else {
-        const mycloud = await cloudinary.v2.uploader.upload(avatar, {
-          folders: 'avatars',
-        });
-        user.avatar = {
-          public_id: mycloud.public_id,
-          url: mycloud.secure_url,
-        };
+    const { name, email, phone, dob, address, medicalHistory } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        name,
+        email,
+        phone,
+        dob,
+        address,
+        medicalHistory,
+      },
+      {
+        new: true,
+        runValidators: true,
       }
+    );
+    if (!user) {
+      return next(new ErrorHandler("User was not found", 400));
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Profile updated Successfully",
+      user,
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});
+
+const getUserInfo = asyncHandler(async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return next(new ErrorHandler("User is not found", 400));
+    }
+    return res.status(200).json({ success: true, user });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});
+
+const changePassword = asyncHandler(async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.user._id).select("+password");
+    const passwordMatch = user.comparePassword(currentPassword);
+    if (!passwordMatch) {
+      return next(new ErrorHandler("Password is incorrect"));
+    }
+    if (currentPassword === newPassword) {
+      return next(new ErrorHandler("New password is already used", 400));
+    }
+    // Now update the old password with new password
+    user.password = newPassword;
+    await user.save();
+    return res
+      .status(200)
+      .json({ success: true, message: "Password updated successfully" });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});
+
+const updateUserAvatar = asyncHandler(async (req, res, next) => {
+  try {
+    const { image } = req.body;
+
+    if (!image) {
+      return next(new ErrorHandler("No image provided", 400));
     }
 
-    delete user._doc.password;
-  
-    await user.save();
-  
-    res.status(200).json({
+    // Upload the image to Cloudinary
+    const result = await cloudinary.v2.uploader.upload(image, {
+      folder: "avatars", // Optional: Save images in a specific folder
+      resource_type: "auto", // Automatically detect the file type
+    });
+    const uploadedImage = {
+      public_id: result.public_id,
+      url: result.secure_url,
+    };
+
+    // Update user profile with the image
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { avatar: uploadedImage },
+      { runValidators: true, new: true }
+    ).lean();
+
+    // Return the Cloudinary URL of the uploaded image
+    return res.status(200).json({
       success: true,
       user,
     });
   } catch (error) {
-    return next(new ErrorHandler(error.message, 400));
+    return next(new ErrorHandler(error.message, 500));
   }
 });
 
-export { registerUser, loginUser, logoutUser, activateUser, updateUserInfo };
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  activateUser,
+  updateUserProfile,
+  changePassword,
+  updateUserAvatar,
+  getUserInfo,
+};

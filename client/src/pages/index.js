@@ -1,7 +1,18 @@
 import HomePage from "./HomePage";
 import RegistrationSuccessPage from "./RegistrationSuccessPage";
-
-export{
+import AboutPage from "./AboutPage";
+import ServicesPage from "./ServicesPage";
+import ProfilePage from "./ProfilePage";
+import BookAppointmentPage from "./BookAppointmentPage";
+import AppointmentPage from "./AppointmentsPage";
+import FindDoctorsPage from "./FindDoctorsPage";
+export {
   HomePage,
-  RegistrationSuccessPage
-}
+  RegistrationSuccessPage,
+  AboutPage,
+  ProfilePage,
+  ServicesPage,
+  BookAppointmentPage,
+  AppointmentPage,
+  FindDoctorsPage
+};

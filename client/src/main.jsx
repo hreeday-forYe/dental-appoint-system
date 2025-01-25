@@ -6,12 +6,18 @@ import store from "./app/store";
 import { Provider } from "react-redux";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { Login, Register, Activate } from "./components";
-import { HomePage } from "./pages";
+import {
+  HomePage,
+  AboutPage,
+  ServicesPage,
+  ProfilePage,
+  RegistrationSuccessPage,
+  BookAppointmentPage,
+  AppointmentPage,
+  FindDoctorsPage
+} from "./pages";
 import AuthLayout from "./routes/AuthLayout";
-import RegistrationSuccessPage from "./pages/RegistrationSuccessPage";
-import NewAppoinment from "./pages/NewAppoinment";
-import ProfilePage from "./pages/ProfilePage";
-import AboutPage from "./pages/AboutPage";
+
 
 const router = createBrowserRouter([
   {
@@ -59,29 +65,46 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "/services",
+        element: <ServicesPage />,
+      },
+      {
         path: "/profile",
         element: (
-          <AuthLayout authentication={false}>
+          <AuthLayout authentication={true}>
             <ProfilePage />
           </AuthLayout>
         ),
       },
       {
-        path: "/new-appointment",
+        path: "/book-appointment",
         element: (
-          <AuthLayout authentication={false}>
-            <NewAppoinment />
+          <AuthLayout authentication={true}>
+            <BookAppointmentPage />
           </AuthLayout>
         ),
+      },
+
+      {
+        path: "/all-appointments",
+        element: (
+          <AuthLayout authentication={true}>
+            <AppointmentPage />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/all-doctors",
+        element: <FindDoctorsPage />,
       },
     ],
   },
 ]);
 
 createRoot(document.getElementById("root")).render(
-  // <StrictMode>
-  <Provider store={store}>
-    <RouterProvider router={router} />
-  </Provider>
-  // </StrictMode>
+  <StrictMode>
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
+  </StrictMode>
 );

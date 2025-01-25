@@ -7,19 +7,23 @@ import {
   About,
   Contact,
   CallToAction,
-  FAQ
+  FAQ,
 } from "../components";
 
 const HomePage = () => {
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <>
       <DentalHero />
       <Features />
       <About />
       <Testimonials />
-      <FAQ/>
-      <CallToAction/>
-      <Contact/>
+      <FAQ />
+      <CallToAction />
+      <Contact />
       <Container></Container>
     </>
   );

@@ -28,7 +28,7 @@ import {
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 
-export default function AppointmentPage() {
+export default function BookAppointmentPage() {
   const [date, setDate] = useState();
 
   const doctors = [
@@ -72,7 +72,7 @@ export default function AppointmentPage() {
   return (
     <div className="min-h-screen bg-background px-4">
       <div className="container mx-auto">
-        <div className="grid border lg:grid-cols-2 gap-8 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 items-center">
           {/* Appointment Form */}
           <Card className="w-full">
             <CardHeader>
@@ -86,7 +86,7 @@ export default function AppointmentPage() {
                 {/* Doctor Selection */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Select Doctor</label>
-                  <Select>
+                  <Select className="focus:border-teal-600">
                     <SelectTrigger>
                       <SelectValue placeholder="Choose your doctor" />
                     </SelectTrigger>
@@ -174,7 +174,7 @@ export default function AppointmentPage() {
           </Card>
 
           {/* Img Section */}
-          <section className="py-16">
+          <section className="py-4">
             <div
               className={`relative hidden lg:block h-[600px] w-full rounded-md overflow-hidden`}
               style={{

@@ -4,17 +4,10 @@ import { NavLink, Link, useLocation } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import React from "react";
 import { LogoutButton } from "../index";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import HeaderDropdown from "./HeaderDropdown";
 import { DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { useSelector } from "react-redux";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 
 export default function Component() {
   const location = useLocation();
@@ -50,7 +43,7 @@ export default function Component() {
     },
     {
       name: "Services",
-      slug: "/Services",
+      slug: "/services",
       active: !authStatus,
     },
     {
@@ -65,7 +58,7 @@ export default function Component() {
     },
     {
       name: "My appointments",
-      slug: "/all-posts",
+      slug: "/all-appointments",
       active: authStatus,
     },
   ];
@@ -113,7 +106,7 @@ export default function Component() {
             )}
 
             <Link
-              to={authStatus ? "/new-appointment" : "/register"}
+              to={authStatus ? "/book-appointment" : "/register"}
               className="mx-auto"
             >
               <Button className="bg-mainCustomColor hover:bg-teal-700 border">
@@ -141,31 +134,10 @@ export default function Component() {
           ) : null
         )}
         {authStatus && (
-          <DropdownMenu>
-            <DropdownMenuTrigger className="bg-white outline-none border-none focus:outline-none focus:border-none active:outline-none">
-              <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="z-[20]">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="group">
-                <Link to={"/profile"} className="group-hover:cursor-pointer">
-                  Profile
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>Billing</DropdownMenuItem>
-              <DropdownMenuItem>Team</DropdownMenuItem>
-              <DropdownMenuItem className="group">
-                <LogoutButton>Logout</LogoutButton>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <HeaderDropdown/>
         )}
         <div className="ml-10">
-          <Link to={authStatus ? "new-appointment" : "register"}>
+          <Link to={authStatus ? "book-appointment" : "register"}>
             <Button className="bg-mainCustomColor hover:bg-teal-700">
               Book Appointment
             </Button>

@@ -38,7 +38,10 @@ const userSchema = new mongoose.Schema(
     address: {
       type: String,
     },
-    medicalissues: {
+    dob: {
+      type: Date,
+    },
+    medicalHistory: {
       type: String,
     },
     role: {

@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import loginImage from "../assets/images/login.png";
 import { Link, NavLink } from "react-router-dom";
-import { About } from "@/components";
+import { About, CallToAction } from "@/components";
 import gallery1 from "../assets/images/gallery/gallery1.png";
 import gallery2 from "../assets/images/gallery/gallery2.png";
 import gallery3 from "../assets/images/gallery/gallery3.jpg";
@@ -12,38 +12,14 @@ import gallery6 from "../assets/images/gallery/gallery6.png";
 import gallery7 from "../assets/images/gallery/gallery7.png";
 import { useEffect } from "react";
 export default function AboutPage() {
-
-  useEffect(()=>{
-    window.scrollTo(0,0)
-  },[])
-  const specialists = [
-    {
-      name: "DR. Brent",
-      title: "General Dentist & Cosmetic Dentist",
-      description:
-        "Dr. Brent is an experienced general dentist who specializes in full-mouth rehabilitation, including but not limited to bridges, veneers, crowns, bridges, dental implants, dentures, and more. He has been practicing dentistry for over 15 years and has helped countless patients achieve their dream smiles.",
-      image: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      name: "DR. Ashish J. Vashi",
-      title: "Aesthetic & Implant Dentistry",
-      description:
-        "Dr. Ashish J. Vashi has served the community, creating smile makeovers in California for over 15 years. His dedication and his highest quality standards in cosmetic dentistry have earned him recognition from his peers and patients alike. He is well-versed in the latest dental technology and is committed to providing the best care possible.",
-      image: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      name: "Dr. James Connors",
-      title: "Dentist & Oral Surgeon",
-      description:
-        "Dr. James Connors is an oral surgeon who has performed over two thousand successful dental surgeries. As an oral and maxillofacial surgeon specialist, Dr. Connors is experienced in all aspects of oral and maxillofacial surgery, including wisdom teeth removal, dental implants, and facial reconstruction surgery.",
-      image: "/placeholder.svg?height=200&width=200",
-    },
-  ];
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <>
       <section className="text-gray-600 body-font">
-        <div className="container py-2 px-5 md:px-12 md:py-16  mx-auto flex flex-wrap">
+        <div className="container py-2 px-5 md:px-12 mb-5 md:py-16  mx-auto flex flex-wrap">
           <div className="lg:w-1/2 w-full mb-10 lg:mb-0 rounded-lg overflow-hidden">
             <img
               alt="feature"
@@ -100,7 +76,7 @@ export default function AboutPage() {
           </div>
           <About />
 
-          {/* ANother section gallery */}
+          {/* Another section gallery */}
           <section className="text-gray-600 body-font">
             <div className="container px-5 py-24 mx-auto flex flex-wrap">
               <div className="flex flex-col text-center w-full mb-20">
@@ -166,6 +142,7 @@ export default function AboutPage() {
             </div>
           </section>
         </div>
+        <CallToAction />
       </section>
     </>
   );

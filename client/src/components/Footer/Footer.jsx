@@ -18,33 +18,33 @@ export default function Footer() {
           <nav className="flex flex-wrap gap-4 text-sm md:gap-6">
             <Link
               className="hover:text-mainCustomColor transition-colors"
-              href="/"
+              to="/"
             >
               Home
             </Link>
             <Link
               className="hover:text-mainCustomColor  transition-colors"
-              href="/service"
+              to="/services"
             >
               Service
             </Link>
             <Link
               className="hover:text-mainCustomColor  transition-colors"
-              href="/blogs"
+              to="/blogs"
             >
               Blogs
             </Link>
             <Link
               className="hover:text-mainCustomColor transition-colors"
-              href="/about"
+              to="/about"
             >
               About
             </Link>
             <Link
               className="hover:text-mainCustomColor transition-colors"
-              href="/contact"
+              to="/all-doctors"
             >
-              Contact
+              Doctors
             </Link>
           </nav>
         </div>
@@ -53,7 +53,7 @@ export default function Footer() {
           <p className="text-sm text-muted-foreground">
             All rights reserved © smilesync.com |{" "}
             <Link
-              href="/terms"
+              to="/terms"
               className="hover:text-mainCustomColor transition-colors"
             >
               Terms and conditions apply!
@@ -62,35 +62,35 @@ export default function Footer() {
 
           <div className="flex gap-4">
             <Link
-              href="#"
+              to="#"
               className="hover:text-mainCustomColor  transition-colors"
             >
               <Facebook className="h-5 w-5" />
               <span className="sr-only">Facebook</span>
             </Link>
             <Link
-              href="#"
+              to="#"
               className="hover:text-mainCustomColor hover:shadow-md transition-colors"
             >
               <Instagram className="h-5 w-5" />
               <span className="sr-only">Instagram</span>
             </Link>
             <Link
-              href="#"
+              to="#"
               className="hover:text-mainCustomColor hover:shadow-md transition-colors"
             >
               <Youtube className="h-5 w-5" />
               <span className="sr-only">YoutubeIcon</span>
             </Link>
             <Link
-              href="#"
+              to="#"
               className="hover:text-mainCustomColor hover:shadow-md transition-colors"
             >
               <Linkedin className="h-5 w-5" />
               <span className="sr-only">LinkedIn</span>
             </Link>
             <Link
-              href="#"
+              to="#"
               className="hover:text-mainCustomColor hover:shadow-md transition-colors"
             >
               <Twitter className="h-5 w-5" />
