@@ -6,6 +6,8 @@ import ProfilePage from "./ProfilePage";
 import BookAppointmentPage from "./BookAppointmentPage";
 import AppointmentPage from "./AppointmentsPage";
 import FindDoctorsPage from "./FindDoctorsPage";
+import DentistDashboardPage from "./DentistDashboardPage";
+import AdminDashboardPage from './AdminDashboardPage'
 export {
   HomePage,
   RegistrationSuccessPage,
@@ -14,5 +16,7 @@ export {
   ServicesPage,
   BookAppointmentPage,
   AppointmentPage,
-  FindDoctorsPage
+  FindDoctorsPage,
+  DentistDashboardPage,
+  AdminDashboardPage,
 };

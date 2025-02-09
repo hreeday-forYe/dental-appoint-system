@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Card,
   CardHeader,
@@ -27,11 +27,28 @@ const Login = () => {
   const [storeLogin, { isLoading }] = useLoginMutation();
   const navigate = useNavigate();
 
+  const { search } = useLocation();
+  const sp = new URLSearchParams(search);
+  const redirect = sp.get("redirect") || "/";
+
   const onSubmit = async (data) => {
     try {
       const res = await storeLogin(data).unwrap();
+      console.log(res.user);
       dispatch(setCredentials({ user: res.user }));
-      navigate("/");
+
+      if (res?.user?.role === "dentist") {
+        console.log("Iam here dentist");
+        navigate("/dentist");
+      } else if (res?.user?.role === "admin") {
+        console.log("I am here admin");
+        navigate("/admin");
+        console.log("Navigation completed");
+      } else if (res?.user?.role === "user") {
+        // For regular users, use the redirect parameter if it exists and is valid
+        console.log("Iam here user");
+        navigate(redirect);
+      }
       toast.success("Login Successfull");
     } catch (error) {
       toast.error(error.data.message || "Login failed try again later");
@@ -111,7 +128,7 @@ const Login = () => {
                 Don&apos;t have an account?{" "}
                 <span
                   className="text-blue-500 cursor-pointer"
-                  onClick={() => navigate("/register")}
+                  onClick={() => navigate(`/register?redirect=${redirect}`)}
                 >
                   Signup
                 </span>

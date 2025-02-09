@@ -33,7 +33,6 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: Number,
       minlength: [10, "Phone Number must be 10 digits"],
-      unique: true,
     },
     address: {
       type: String,

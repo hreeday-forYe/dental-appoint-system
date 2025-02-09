@@ -79,7 +79,7 @@ function ProfilePage() {
         name: data.user.name || "",
         email: data.user.email || "",
         phone: data.user.phone || "",
-        dob: formatDate(data.user.dob) || "",
+        dob: data.user.dob? formatDate(data.user.dob) : "",
         address: data.user.address || "",
         medicalHistory: data.user.medicalHistory || "",
       });
@@ -187,6 +187,10 @@ function ProfilePage() {
     setPreferredDentists((prev) => prev.filter((id) => id !== dentistId));
     toast.success("Dentist preference removed");
   };
+
+  useEffect(() =>{
+    window.scrollTo(0,0)
+  },[])
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -424,7 +428,7 @@ function ProfilePage() {
                       >
                         Cancel
                       </Button>
-                      <Button type="submit">Update Password</Button>
+                      <Button type="submit" className="bg-mainCustomColor">Update Password</Button>
                     </div>
                   </form>
                 </DialogContent>
@@ -433,7 +437,7 @@ function ProfilePage() {
 
             {isEditing && (
               <div className="flex justify-end">
-                <Button type="submit">Save Changes</Button>
+                <Button type="submit" className="bg-mainCustomColor">Save Changes</Button>
               </div>
             )}
           </form>

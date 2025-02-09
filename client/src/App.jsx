@@ -7,7 +7,8 @@ function App() {
     location.pathname === "/login" ||
     location.pathname === "/register" ||
     location.pathname === "/register-success" ||
-    location.pathname === "/activate";
+    location.pathname === "/activate" ||
+    location.pathname === "/register-as-dentist" 
   return (
     <>
       {!isAuthPath && <Header />}

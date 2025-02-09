@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import {
   Card,
   CardHeader,
@@ -26,12 +27,16 @@ const Register = () => {
   const navigate = useNavigate();
   const [storeRegister, { isLoading }] = useRegisterMutation();
 
+  const { search } = useLocation();
+  const sp = new URLSearchParams(search);
+  const redirect = sp.get("redirect") || "/";
+
   const onSubmit = async (data) => {
     try {
       const res = await storeRegister(data).unwrap();
       // dispatch(setCredentials(res.data));
 
-      navigate("/activate", {
+      navigate(`/activate?redirect=${redirect}`, {
         state: { activationToken: res.activationToken },
       });
       toast.success("Please check your mail");
@@ -137,7 +142,7 @@ const Register = () => {
                 Already have an account?{" "}
                 <span
                   className="text-blue-500 cursor-pointer"
-                  onClick={() => navigate("/login")}
+                  onClick={() =>  navigate(`/login?redirect=${redirect}`)}
                 >
                   Login
                 </span>

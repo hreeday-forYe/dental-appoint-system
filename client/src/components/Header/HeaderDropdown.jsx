@@ -8,6 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { User } from "lucide-react";
 import { useGetUserProfileQuery } from "@/app/slices/userApiSlice";
 import { Link } from "react-router-dom";
 import { LogoutButton } from "..";
@@ -16,9 +17,11 @@ const HeaderDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="outline-none border-none focus:outline-none focus:border-none active:outline-none">
-        <Avatar>
+        <Avatar className="bg-gray-200 shadow-sm">
           <AvatarImage src={data?.user.avatar?.url}  className="rounded-full"/>
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarFallback>
+            <User/>
+          </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="z-[20]">
@@ -32,7 +35,7 @@ const HeaderDropdown = () => {
         <DropdownMenuItem>Billing</DropdownMenuItem>
         <DropdownMenuItem>Team</DropdownMenuItem>
         <DropdownMenuItem className="group">
-          <LogoutButton>Logout</LogoutButton>
+          <LogoutButton className="bg-red-400">Logout</LogoutButton>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

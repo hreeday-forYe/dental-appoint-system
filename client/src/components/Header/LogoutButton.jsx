@@ -5,7 +5,9 @@ import { useLogoutMutation } from "../../app/slices/userApiSlice";
 import { logout as logoutStore } from "../../app/slices/authSlice";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-const LogoutButton = () => {
+import {LogOut} from 'lucide-react';
+
+const LogoutButton = ({className=""}) => {
   const [logout, { isLoading }] = useLogoutMutation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -23,9 +25,10 @@ const LogoutButton = () => {
     <Button
       onClick={handleLogout}
       disabled={isLoading}
-      className="p-1 bg-white text-black w-full group-hover:bg-transparent group-hover:cursor-pointer font-normal "
+      className={`${className}`}
     >
-      {isLoading ? "Logging Out..." : "logout"}
+      
+      <LogOut/> {isLoading ? "Logging Out..." : "logout"}
     </Button>
   );
 };

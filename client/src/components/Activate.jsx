@@ -26,13 +26,15 @@ const Activate = () => {
   const location = useLocation();
   const activationToken = location.state?.activationToken;
   const [activateAccount, { isLoading }] = useActivateMutation();
+  const { search } = useLocation();
+  const sp = new URLSearchParams(search);
+  const redirect = sp.get("redirect") || "/register-success";
   const navigate = useNavigate();
   const onSubmit = async (data) => {
     if (!activationToken) {
       alert("Activation token is missing.");
       return;
     }
-
     // Combine the activation code from user input and token from location state
     const payload = {
       activation_code: data.otp,
@@ -41,7 +43,7 @@ const Activate = () => {
     try {
       const response = await activateAccount(payload).unwrap();
       if (response.success) {
-        navigate("/register-success");
+        navigate(redirect);
         // Perform further actions like redirecting to login
         toast.success("Registration was successfull");
       }

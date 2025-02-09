@@ -7,13 +7,14 @@ import { LogoutButton } from "../index";
 import HeaderDropdown from "./HeaderDropdown";
 import { DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { useSelector } from "react-redux";
-
+import { userApiSlice } from "@/app/slices/userApiSlice";
 
 export default function Component() {
   const location = useLocation();
   // const authStatus = false;
   const [headerBg, setHeaderBg] = React.useState("bg-transparent");
   const authStatus = useSelector((state) => state.auth.isAuthenticated);
+  const userInfo = useSelector((state) => state.auth.user);
   React.useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 100) {
@@ -58,7 +59,7 @@ export default function Component() {
     },
     {
       name: "My appointments",
-      slug: "/all-appointments",
+      slug: "/my-appointments",
       active: authStatus,
     },
   ];
@@ -104,7 +105,7 @@ export default function Component() {
                 </NavLink>
               ) : null
             )}
-
+            
             <Link
               to={authStatus ? "/book-appointment" : "/register"}
               className="mx-auto"
@@ -133,9 +134,7 @@ export default function Component() {
             </NavLink>
           ) : null
         )}
-        {authStatus && (
-          <HeaderDropdown/>
-        )}
+        {authStatus && <HeaderDropdown />}
         <div className="ml-10">
           <Link to={authStatus ? "book-appointment" : "register"}>
             <Button className="bg-mainCustomColor hover:bg-teal-700">

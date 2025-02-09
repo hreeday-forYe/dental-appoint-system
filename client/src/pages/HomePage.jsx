@@ -7,6 +7,7 @@ import {
   About,
   Contact,
   CallToAction,
+  CallToActionDentist,
   FAQ,
 } from "../components";
 

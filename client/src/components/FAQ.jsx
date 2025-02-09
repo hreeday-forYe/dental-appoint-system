@@ -58,12 +58,14 @@ const FAQ = () => {
           Frequently asked questions
         </h2>
       </div>
-      <div className="w-[60%] mx-auto">
+      <div className="lg:w-[60%] mx-auto">
         <Accordion type="single" collapsible className="w-full">
           {FAQItems.map((faq) => (
-            <div key={faq.id} className="p-3 border m-2">
+            <div key={faq.id} className="lg:p-3 p-1 border m-2">
               <AccordionItem value={`item-${faq.id}`} className="border-none">
-                <AccordionTrigger>{faq.question}</AccordionTrigger>
+                <AccordionTrigger className="text-base text-left md:text-center md:text-xl">
+                  {faq.question}
+                </AccordionTrigger>
                 <AccordionContent className="text-zinc-700">
                   {faq.answer}
                 </AccordionContent>

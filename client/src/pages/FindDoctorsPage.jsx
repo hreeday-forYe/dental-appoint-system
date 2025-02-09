@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Stethoscope } from "lucide-react";
 import {
   Select,
   SelectTrigger,
@@ -11,28 +12,29 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { useGetAllDentistsQuery } from "@/app/slices/dentistApiSlice";
 // import { Checkbox } from "@/components/ui/checkbox";
 
 // Mock data for 30 doctors
-const mockDoctors = [
-  {
-    id: 1,
-    name: "Dr. Sarah Johnson",
-    specialization: "General Dentistry",
-    location: "New York, NY",
-    availability: "Available Today",
-    image: "https://source.unsplash.com/100x100/?portrait,dentist,1",
-  },
-  {
-    id: 2,
-    name: "Dr. Michael Chen",
-    specialization: "Orthodontics",
-    location: "Los Angeles, CA",
-    availability: "Available This Week",
-    image: "https://source.unsplash.com/100x100/?portrait,dentist,2",
-  },
-  // Add 28 more doctors...
-];
+// const mockDoctors = [
+//   {
+//     id: 1,
+//     name: "Dr. Sarah Johnson",
+//     specialization: "General Dentistry",
+//     location: "New York, NY",
+//     availability: "Available Today",
+//     image: "https://source.unsplash.com/100x100/?portrait,dentist,1",
+//   },
+//   {
+//     id: 2,
+//     name: "Dr. Michael Chen",
+//     specialization: "Orthodontics",
+//     location: "Los Angeles, CA",
+//     availability: "Available This Week",
+//     image: "https://source.unsplash.com/100x100/?portrait,dentist,2",
+//   },
+//   // Add 28 more doctors...
+// ];
 
 // Mock data for filters
 const specializations = [
@@ -58,44 +60,49 @@ const FindDoctorsPage = () => {
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedAvailability, setSelectedAvailability] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const { data, isLoading, refetch } = useGetAllDentistsQuery();
+  console.log(data);
+  const currentDoctors = data?.dentists;
   const doctorsPerPage = 10;
+  const totalPages= 4
+  // console.log(mockDoctors);
 
-  // Filter doctors based on search and filters
-  const filteredDoctors = mockDoctors.filter((doctor) => {
-    const matchesSearch =
-      doctor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      doctor.specialization.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      doctor.location.toLowerCase().includes(searchQuery.toLowerCase());
+  // // Filter doctors based on search and filters
+  // const filteredDoctors = mockDoctors?.filter((doctor) => {
+  //   const matchesSearch =
+  //     doctor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     doctor.specialization.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     doctor.location.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesSpecialization = selectedSpecialization
-      ? doctor.specialization === selectedSpecialization
-      : true;
+  //   const matchesSpecialization = selectedSpecialization
+  //     ? doctor.specialization === selectedSpecialization
+  //     : true;
 
-    const matchesLocation = selectedLocation
-      ? doctor.location === selectedLocation
-      : true;
+  //   const matchesLocation = selectedLocation
+  //     ? doctor.location === selectedLocation
+  //     : true;
 
-    const matchesAvailability =
-      selectedAvailability.length === 0 ||
-      selectedAvailability.includes(doctor.availability);
+  //   const matchesAvailability =
+  //     selectedAvailability.length === 0 ||
+  //     selectedAvailability.includes(doctor.availability);
 
-    return (
-      matchesSearch &&
-      matchesSpecialization &&
-      matchesLocation &&
-      matchesAvailability
-    );
-  });
+  //   return (
+  //     matchesSearch &&
+  //     matchesSpecialization &&
+  //     matchesLocation &&
+  //     matchesAvailability
+  //   );
+  // });
 
-  // Pagination logic
-  const indexOfLastDoctor = currentPage * doctorsPerPage;
-  const indexOfFirstDoctor = indexOfLastDoctor - doctorsPerPage;
-  const currentDoctors = filteredDoctors.slice(
-    indexOfFirstDoctor,
-    indexOfLastDoctor
-  );
+  // // Pagination logic
+  // const indexOfLastDoctor = currentPage * doctorsPerPage;
+  // const indexOfFirstDoctor = indexOfLastDoctor - doctorsPerPage;
+  // const currentDoctors = filteredDoctors?.slice(
+  //   indexOfFirstDoctor,
+  //   indexOfLastDoctor
+  // );
 
-  const totalPages = Math.ceil(filteredDoctors.length / doctorsPerPage);
+  // const totalPages = Math.ceil(filteredDoctors.length / doctorsPerPage);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -169,25 +176,27 @@ const FindDoctorsPage = () => {
 
         {/* Doctor List */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {currentDoctors.map((doctor) => (
+          {currentDoctors?.map((doctor) => (
             <Card key={doctor.id}>
               <CardHeader>
                 <div className="flex items-center space-x-4">
                   <Avatar className="h-12 w-12">
                     <AvatarImage src={doctor.image} alt={doctor.name} />
-                    <AvatarFallback>{doctor.name.charAt(0)}</AvatarFallback>
+                    <AvatarFallback>{doctor.user.name.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <CardTitle className="text-lg">{doctor.name}</CardTitle>
+                    <CardTitle className="text-lg">{doctor.user.name}</CardTitle>
                     <p className="text-sm text-gray-600">
                       {doctor.specialization}
                     </p>
                   </div>
+                    
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-gray-600 mb-2">{doctor.location}</p>
-                <Badge variant="secondary">{doctor.availability}</Badge>
+                <p className="text-sm text-gray-600 mb-2">{doctor.experience} years</p>
+                <Badge variant="secondary">{doctor.user.isVerified}</Badge>
+                <Badge variant="secondary">{doctor.workingHours.days[0]}</Badge>
               </CardContent>
             </Card>
           ))}

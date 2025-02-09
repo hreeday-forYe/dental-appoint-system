@@ -5,7 +5,15 @@ import App from "./App.jsx";
 import store from "./app/store";
 import { Provider } from "react-redux";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { Login, Register, Activate } from "./components";
+import {
+  Login,
+  Register,
+  Activate,
+  DentistRegistrationForm,
+  AdminDashboard,
+  AdminAllUsers,
+  AdminAllDentists,
+} from "./components";
 import {
   HomePage,
   AboutPage,
@@ -14,10 +22,13 @@ import {
   RegistrationSuccessPage,
   BookAppointmentPage,
   AppointmentPage,
-  FindDoctorsPage
+  FindDoctorsPage,
+  DentistDashboardPage,
+  AdminDashboardPage,
 } from "./pages";
 import AuthLayout from "./routes/AuthLayout";
-
+import AdminLayout from "./routes/AdminLayout";
+import DentistLayout from "./routes/DentistLayout";
 
 const router = createBrowserRouter([
   {
@@ -86,7 +97,7 @@ const router = createBrowserRouter([
       },
 
       {
-        path: "/all-appointments",
+        path: "/my-appointments",
         element: (
           <AuthLayout authentication={true}>
             <AppointmentPage />
@@ -97,6 +108,54 @@ const router = createBrowserRouter([
         path: "/all-doctors",
         element: <FindDoctorsPage />,
       },
+      {
+        path: "/register-as-dentist",
+        element: (
+          <AuthLayout authentication={true}>
+            <DentistRegistrationForm />
+          </AuthLayout>
+        ),
+      },
+    ],
+  },
+  {
+    path: "/admin",
+    element: <AdminDashboardPage />,
+    children: [
+      {
+        index: "admin",
+        element: (
+          
+            <AdminDashboard />
+          
+        ),
+      }, // Default admin dashboard
+      {
+        path: "all-users",
+        element: <AdminAllUsers />,
+      }, //  admin All Users Management
+      {
+        path: "all-appointments",
+        element: <AdminAllUsers />,
+      }, // Default admin dashboard
+      {
+        path: "all-dentists",
+        element: <AdminAllDentists />,
+      }, // Default admin dashboard
+    ],
+  },
+  {
+    path: "/dentist",
+    element: <DentistDashboardPage />,
+    children: [
+      {
+        index: true,
+        element: (
+          <DentistLayout>
+            <AdminDashboard />
+          </DentistLayout>
+        ),
+      }, // Default Dentist Dashboard page
     ],
   },
 ]);
