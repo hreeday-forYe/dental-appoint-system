@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import loginImage from "../assets/images/login.png";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { About, CallToActionDentist } from "@/components";
 import gallery1 from "../assets/images/gallery/gallery1.png";
 import gallery2 from "../assets/images/gallery/gallery2.png";

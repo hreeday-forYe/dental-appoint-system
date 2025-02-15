@@ -13,6 +13,7 @@ import {
   AdminDashboard,
   AdminAllUsers,
   AdminAllDentists,
+  AdminAddDentist
 } from "./components";
 import {
   HomePage,
@@ -125,14 +126,19 @@ const router = createBrowserRouter([
       {
         index: "admin",
         element: (
-          
-            <AdminDashboard />
+            <AdminLayout>
+              <AdminDashboard />
+            </AdminLayout>
           
         ),
       }, // Default admin dashboard
       {
         path: "all-users",
-        element: <AdminAllUsers />,
+        element: (
+        <AdminLayout>
+          <AdminAllUsers />
+        </AdminLayout>
+      ),
       }, //  admin All Users Management
       {
         path: "all-appointments",
@@ -140,7 +146,19 @@ const router = createBrowserRouter([
       }, // Default admin dashboard
       {
         path: "all-dentists",
-        element: <AdminAllDentists />,
+        element: (
+          <AdminLayout>
+            <AdminAllDentists />
+          </AdminLayout>
+        ),
+      }, // Default admin dashboard
+      {
+        path: "add-dentist",
+        element: (
+          <AdminLayout>
+            <AdminAddDentist />
+          </AdminLayout>
+        ),
       }, // Default admin dashboard
     ],
   },

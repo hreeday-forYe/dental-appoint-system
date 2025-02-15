@@ -6,7 +6,7 @@ const AdminDashboardPage = () => {
   return (
     <>
       <div className="flex min-h-screen bg-background">
-        <div>
+        <div className='fixed flex'>
           <Sidebar />
         </div>
         <Outlet />

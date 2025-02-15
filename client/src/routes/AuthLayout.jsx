@@ -15,9 +15,7 @@ export default function Protected({ children, authentication = true }) {
       // Redirect based on authentication status
       if (authentication && !authStatus) {
         navigate(`/login`); // Redirect unauthenticated users
-      } else if (!authentication && authStatus) {
-        navigate("/"); // Redirect authenticated users from public pages
-      }
+      } 
       setLoading(false); // Loading completes after redirection check
     };
 

@@ -19,7 +19,7 @@ import FAQ from "./FAQ";
 import AdminDashboard from "./Dashboard/AdminDashboard";
 import AdminAllUsers from "./Dashboard/AdminAllUsers";
 import AdminAllDentists from "./Dashboard/AdminAllDentists";
-
+import AdminAddDentist from "./Dashboard/AdminAddDentist";
 export {
   Login,
   Register,
@@ -40,4 +40,5 @@ export {
   AdminDashboard,
   AdminAllUsers,
   AdminAllDentists,
+  AdminAddDentist,
 };

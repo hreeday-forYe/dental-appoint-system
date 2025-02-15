@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import {LogOut} from 'lucide-react';
 
-const LogoutButton = ({className=""}) => {
+const LogoutButton = ({className=""}, isSidebarCollapsed=false) => {
   const [logout, { isLoading }] = useLogoutMutation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const LogoutButton = ({className=""}) => {
   return (
     <Button
       onClick={handleLogout}
-      disabled={isLoading}
+      disabled={isLoading} // Disable the button if isSidebarCollapsed is true
       className={`${className}`}
     >
       

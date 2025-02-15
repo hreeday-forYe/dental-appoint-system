@@ -78,7 +78,7 @@ const Sidebar = () => {
         </nav>
       </div>
       <div className="border-t p-4">
-        <LogoutButton className="bg-no w-full justify-start text-red-600 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50" />
+        <LogoutButton className="bg-no w-full justify-start text-red-600 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50" isSidebarCollapsed={isSidebarCollapsed} />
       </div>
     </div>
   );
