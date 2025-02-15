@@ -130,6 +130,7 @@ class DentistController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
+  
   static manageAvailability = asyncHandler(async (req, res, next) => {
     // find the dentist with his id and manage his working hours from the dentist model
     const dentistId = req.params.id;

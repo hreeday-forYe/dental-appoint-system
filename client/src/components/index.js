@@ -13,6 +13,7 @@ import Contact from "./Contact";
 import CallToAction from "./CallToAction";
 import CallToActionDentist from "./CallToActionDentist";
 import DentistRegistrationForm from "./Dentist/DentistRegistrationForm";
+import DentistCard from "./Dentist/DentistCard";
 import FAQ from "./FAQ";
 
 // Admin components
@@ -37,6 +38,7 @@ export {
   CallToAction,
   CallToActionDentist,
   DentistRegistrationForm,
+  DentistCard,
   AdminDashboard,
   AdminAllUsers,
   AdminAllDentists,
