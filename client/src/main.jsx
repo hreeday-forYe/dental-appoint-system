@@ -10,6 +10,7 @@ import {
   Register,
   Activate,
   DentistRegistrationForm,
+  DentistAppointments,
   AdminDashboard,
   AdminAllUsers,
   AdminAllDentists,
@@ -26,6 +27,7 @@ import {
   FindDoctorsPage,
   DentistDashboardPage,
   AdminDashboardPage,
+  SingleDentistPage
 } from "./pages";
 import AuthLayout from "./routes/AuthLayout";
 import AdminLayout from "./routes/AdminLayout";
@@ -110,6 +112,14 @@ const router = createBrowserRouter([
         element: <FindDoctorsPage />,
       },
       {
+        path: "/dentist/:id",
+        element: (
+          <AuthLayout authentication={true}>
+            <SingleDentistPage />,
+          </AuthLayout>
+        )
+      },
+      {
         path: "/register-as-dentist",
         element: (
           <AuthLayout authentication={true}>
@@ -171,6 +181,14 @@ const router = createBrowserRouter([
         element: (
           <DentistLayout>
             <AdminDashboard />
+          </DentistLayout>
+        ),
+      }, // Default Dentist Dashboard page
+      {
+        path: "appointments",
+        element: (
+          <DentistLayout>
+            <DentistAppointments />
           </DentistLayout>
         ),
       }, // Default Dentist Dashboard page

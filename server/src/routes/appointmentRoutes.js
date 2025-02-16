@@ -9,11 +9,30 @@ appointmentRouter.post(
   authorizeRoles("user"),
   AppointmentController.bookAppointment
 );
-appointmentRouter.put(
-  "/",
+appointmentRouter.post(
+  "/check-availability",
   isAuthenticated,
   authorizeRoles("user"),
-  AppointmentController.rescheduleAppointment
+  AppointmentController.checkAvailability
+);
+
+appointmentRouter.get(
+  "/dentist-appointments",
+  isAuthenticated,
+  authorizeRoles("dentist"),
+  AppointmentController.fetchDentistAppointments
+);
+appointmentRouter.get(
+  "/user-appointments",
+  isAuthenticated,
+  AppointmentController.fetchUserAppointments
+);
+
+appointmentRouter.put(
+  "/:id",
+  isAuthenticated,
+  authorizeRoles("dentist"),
+  AppointmentController.approveAppointmentDentist
 );
 
 export default appointmentRouter;

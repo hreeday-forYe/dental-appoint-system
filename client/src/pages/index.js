@@ -8,6 +8,7 @@ import AppointmentPage from "./AppointmentsPage";
 import FindDoctorsPage from "./FindDoctorsPage";
 import DentistDashboardPage from "./DentistDashboardPage";
 import AdminDashboardPage from './AdminDashboardPage'
+import SingleDentistPage from './SingleDentistPage'
 export {
   HomePage,
   RegistrationSuccessPage,
@@ -18,5 +19,6 @@ export {
   AppointmentPage,
   FindDoctorsPage,
   DentistDashboardPage,
+  SingleDentistPage,
   AdminDashboardPage,
 };

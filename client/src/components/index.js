@@ -15,6 +15,8 @@ import CallToActionDentist from "./CallToActionDentist";
 import DentistRegistrationForm from "./Dentist/DentistRegistrationForm";
 import DentistCard from "./Dentist/DentistCard";
 import FAQ from "./FAQ";
+import BookingForm from "./Dentist/BookingForm";
+import DentistAppointments from './Dentist/DentistAppointments'
 
 // Admin components
 import AdminDashboard from "./Dashboard/AdminDashboard";
@@ -39,6 +41,8 @@ export {
   CallToActionDentist,
   DentistRegistrationForm,
   DentistCard,
+  BookingForm,
+  DentistAppointments,
   AdminDashboard,
   AdminAllUsers,
   AdminAllDentists,

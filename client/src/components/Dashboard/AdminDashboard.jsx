@@ -173,7 +173,7 @@ function AdminDashboard() {
 
             {/* Financial Overview */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              <Card className="p-6">
+              {/* <Card className="p-6">
                 <div className="flex items-center gap-4">
                   <div className="rounded-full bg-green-100 p-3 dark:bg-green-900">
                     <DollarSign className="h-6 w-6 text-green-700 dark:text-green-300" />
@@ -192,9 +192,9 @@ function AdminDashboard() {
                     </div>
                   </div>
                 </div>
-              </Card>
+              </Card> */}
 
-              <Card className="p-6">
+              {/* <Card className="p-6">
                 <div className="flex items-center gap-4">
                   <div className="rounded-full bg-blue-100 p-3 dark:bg-blue-900">
                     <CreditCard className="h-6 w-6 text-blue-700 dark:text-blue-300" />
@@ -249,7 +249,7 @@ function AdminDashboard() {
                     </div>
                   </div>
                 </div>
-              </Card>
+              </Card> */}
             </div>
 
             {/* Stats Overview */}
@@ -311,7 +311,7 @@ function AdminDashboard() {
                 </div>
               </Card>
 
-              <Card className="p-6">
+              {/* <Card className="p-6">
                 <div className="flex items-center gap-4">
                   <div className="rounded-full bg-orange-100 p-3 dark:bg-orange-900">
                     <Activity className="h-6 w-6 text-orange-700 dark:text-orange-300" />
@@ -330,13 +330,13 @@ function AdminDashboard() {
                     </div>
                   </div>
                 </div>
-              </Card>
+              </Card> */}
             </div>
 
             {/* Recent Activity */}
             <div className="grid gap-6 lg:grid-cols-2">
               {/* Recent Payments */}
-              <Card className="p-6">
+              {/* <Card className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-semibold">Recent Payments</h2>
                   <Button variant="ghost" className="text-sm">
@@ -377,10 +377,10 @@ function AdminDashboard() {
                     </div>
                   ))}
                 </div>
-              </Card>
+              </Card> */}
 
               {/* Recent Appointments */}
-              <Card className="p-6">
+              {/* <Card className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-semibold">Recent Appointments</h2>
                   <Button variant="ghost" className="text-sm">
@@ -421,7 +421,7 @@ function AdminDashboard() {
                     </div>
                   ))}
                 </div>
-              </Card>
+              </Card> */}
             </div>
 
             {/* Recent Users */}
