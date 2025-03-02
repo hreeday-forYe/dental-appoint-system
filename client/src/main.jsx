@@ -138,8 +138,7 @@ const router = createBrowserRouter([
         element: (
             <AdminLayout>
               <AdminDashboard />
-            </AdminLayout>
-          
+            </AdminLayout>          
         ),
       }, // Default admin dashboard
       {

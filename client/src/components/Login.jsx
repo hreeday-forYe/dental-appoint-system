@@ -34,19 +34,15 @@ const Login = () => {
   const onSubmit = async (data) => {
     try {
       const res = await storeLogin(data).unwrap();
-      console.log(res.user);
       dispatch(setCredentials({ user: res.user }));
 
       if (res?.user?.role === "dentist") {
-        console.log("Iam here dentist");
         navigate("/dentist");
       } else if (res?.user?.role === "admin") {
-        console.log("I am here admin");
         navigate("/admin");
         console.log("Navigation completed");
       } else if (res?.user?.role === "user") {
         // For regular users, use the redirect parameter if it exists and is valid
-        console.log("Iam here user");
         navigate(redirect);
       }
       toast.success("Login Successfull");

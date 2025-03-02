@@ -3,7 +3,11 @@ import Appointment from "../models/appointmentModel.js";
 import User from "../models/userModel.js";
 import Dentist from "../models/dentistModel.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
-
+import ejs from "ejs";
+import path from "path";
+import { fileURLToPath } from "url";
+import sendMail from "../utils/sendMail.js";
+import { format } from "date-fns";
 class AppointmentController {
   static bookAppointment = asyncHandler(async (req, res, next) => {
     try {
@@ -29,6 +33,7 @@ class AppointmentController {
       await newAppointment.save();
 
       // TODO: Plan for notification
+      // await Notification.create
 
       res.status(201).json({
         success: true,
@@ -156,15 +161,54 @@ class AppointmentController {
       const { id } = req.params;
       const appointment = await Appointment.findByIdAndUpdate(
         id,
-        {
-          status: "Confirmed",
-        },
-        {
-          new: true,
-          runValidators: true,
-        }
+        { status: "Confirmed" },
+        { new: true, runValidators: true }
+      )
+        .populate("user", "name email") // Populating user's name from User schema
+        .populate({
+          path: "dentist", // Populating the Dentist document
+          populate: {
+            path: "user", // Populating the User document within Dentist
+            select: "name", // Selecting only the name field from User
+          },
+        });
+
+      // Sending mail to the user Functionality
+      // SEND MAIL TO THE EMAIL OF THE ADDED DISTRIBUTOR
+      // Format the date and time using date-fns
+      const formattedDate = format(new Date(appointment.date), "do MMMM yyyy");
+      const formattedTime = appointment.timeSlot;
+      const mailData = {
+        userName: appointment.user.name,
+        dentistName: appointment.dentist.user.name,
+        appointmentDate: formattedDate,
+        appointmentTime: formattedTime,
+      };
+
+      const __filename = fileURLToPath(import.meta.url);
+      const currentDirectory = path.dirname(__filename);
+      const mailPath = path.join(
+        currentDirectory,
+        "../mails/appointmentConfirmation.ejs"
       );
-      // console.log(appointment);
+
+      const html = await ejs.renderFile(mailPath, mailData);
+
+      // Sending the mail to the distributor for his account creation
+      try {
+        if (appointment && appointment.status==='Confirmed') {
+          await sendMail({
+            email: appointment.user.email,
+            subject: "Appointment Confirmation",
+            template: "appointmentConfirmation.ejs",
+            data: mailData,
+          });
+        }
+      } catch (mailError) {
+        console.error("Mail sending failed:", mailError);
+        return next(new ErrorHandler("Failed to send email.", 500));
+      }
+
       return res.status(200).json({
         success: true,
         message: "Appointment confirmed",

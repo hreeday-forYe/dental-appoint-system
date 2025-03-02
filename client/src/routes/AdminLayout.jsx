@@ -11,7 +11,6 @@ const AdminLayout = ({ children }) => {
     const checkAdmin = () => {
       if (!userInfo) {
         // If userInfo is not available, redirect to login
-        console.log("User not logged in, redirecting to login...");
         navigate("/login");
         toast.error("Please log in to access this page");
         return;
