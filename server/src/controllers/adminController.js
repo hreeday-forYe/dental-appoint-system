@@ -1,62 +1,10 @@
 import { asyncHandler } from "../middlewares/asyncHandler.js";
 import Dentist from "../models/dentistModel.js";
 import User from "../models/userModel.js";
+import Appointment from "../models/appointmentModel.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
 import mongoose from "mongoose";
 class AdminController {
-  // static registerDentistByAdmin = asyncHandler(async (req, res, next) => {
-  //   try {
-  //     const {
-  //       name,
-  //       email,
-  //       password,
-  //       phone,
-  //       address,
-  //       dob,
-  //       specialization,
-  //       experience,
-  //       nmcNumber,
-  //       qualifications,
-  //       consultingFee,
-  //       workingHours,
-  //       slotDuration,
-  //     } = req.body;
-  //     // Check if the dentist already exists
-  //     const existsDentist = await User.findOne({ email });
-  //     if (existsDentist) {
-  //       return next(new ErrorHandler("Dentist with email already exits", 400));
-  //     }
-  //     const dentistUser = await User.create({
-  //       name,
-  //       email,
-  //       password,
-  //       phone,
-  //       address,
-  //       dob,
-  //       isVerified: true,
-  //     });
-
-  //     // now finally creating the dentist
-  //     const newDentist = new Dentist({
-  //       user: dentistUser._id,
-  //       specialization,
-  //       experience,
-  //       nmcNumber,
-  //       qualifications,
-  //       consultingFee,
-  //       workingHours,
-  //       slotDuration,
-  //     });
-  //     await newDentist.save()
-
-  //     res.status(201).json({
-  //       success: true,
-  //       message: "Dentist profile created successfully.",
-  //     });
-  //   } catch (error) {
-  //     return next(new ErrorHandler(error.message, 500));
-  //   }
-  // });
 
   static registerDentistByAdmin = asyncHandler(async (req, res, next) => {
     const session = await mongoose.startSession();
@@ -151,6 +99,44 @@ class AdminController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
-}
 
+  static fetchAllUsersByAdmin = asyncHandler(async (req, res, next) => {
+    try {
+      const users = await User.find();
+      if (!users) {
+        return res
+          .status(200)
+          .json({ success: true, message: "No Dentist Found" });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Users Fetched successfully",
+        users,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
+
+  static fetchAllAppointmentsByAdmin = asyncHandler(async (req, res, next) => {
+    try {
+      const appointments = await Appointment.find().populate("user", "name email") // Populating user's name from User schema
+      .populate({
+        path: "dentist", // Populating the Dentist document
+        populate: {
+          path: "user", // Populating the User document within Dentist
+          select: "name email", // Selecting only the name field from User
+        },
+      });
+
+      if(!appointments){
+        return res.status(200).json({success:true, message:"No Appointments Found"})
+      }
+      return res.status(200).json({success:true, message:"Appointments Fetched Successfully", appointments})
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
+}
 export default AdminController;

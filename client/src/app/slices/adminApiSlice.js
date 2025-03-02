@@ -11,7 +11,21 @@ export const adminApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
     }),
+    fetchAllUsers: builder.query({
+      query: () => ({
+        url: `${admin_url}/all-users`,
+        method: "GET",
+        credentials: "include",
+      }),
+    }),
+    fetchAllAppointments: builder.query({
+      query: () => ({
+        url: `${admin_url}/all-appointments`,
+        method: "GET",
+        credentials: "include",
+      }),
+    }),
   }),
 });
 
-export const { useAddDentistMutation } = adminApiSlice;
+export const { useAddDentistMutation, useFetchAllUsersQuery, useFetchAllAppointmentsQuery } = adminApiSlice;

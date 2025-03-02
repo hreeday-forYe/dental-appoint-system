@@ -15,6 +15,14 @@ adminRouter.post(
 );
 
 // Get everything for the details 
+adminRouter.get(
+  "/all-users",
+  isAuthenticated,
+  authorizeRoles('admin'),
+  AdminController.fetchAllUsersByAdmin
+);
+
+adminRouter.get("/all-appointments", isAuthenticated, authorizeRoles('admin'), AdminController.fetchAllAppointmentsByAdmin)
 
 
 

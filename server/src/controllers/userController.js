@@ -270,9 +270,6 @@ class UserController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
-
-
-  
 }
 
 export default UserController;
