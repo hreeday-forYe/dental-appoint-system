@@ -33,12 +33,20 @@ export const appointmentApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
     }),
-    changeAppointmentStatus : builder.mutation({
-      query: (id) =>({
+    changeAppointmentStatus: builder.mutation({
+      query: (id) => ({
         url: `${appointment_url}/${id}`,
         method: "PUT",
         credentials: "include",
-      })
+      }),
+    }),
+    cancelAppointment: builder.mutation({
+      query: ({appointmentId, reason}) => ({
+        url: `${appointment_url}/cancel/${appointmentId}`,
+        method: "PUT",
+        credentials: "include",
+        body: reason,
+      }),
     }),
   }),
 });
@@ -48,5 +56,6 @@ export const {
   useCheckAvailabilityMutation,
   useGetUserAppointmentsQuery,
   useGetDentistAppointmentsQuery,
-  useChangeAppointmentStatusMutation
+  useChangeAppointmentStatusMutation,
+  useCancelAppointmentMutation
 } = appointmentApiSlice;

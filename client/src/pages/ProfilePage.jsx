@@ -38,7 +38,7 @@ const mockDentists = [
 ];
 
 const formatDate = (date) => {
-  return format(new Date(date), "yyyy-MM-dd");
+  return format(new Date(date), "do MMM yyyy");
 };
 
 function ProfilePage() {
@@ -79,7 +79,7 @@ function ProfilePage() {
         name: data.user.name || "",
         email: data.user.email || "",
         phone: data.user.phone || "",
-        dob: data.user.dob? formatDate(data.user.dob) : "",
+        dob: data.user.dob ? formatDate(data.user.dob) : "",
         address: data.user.address || "",
         medicalHistory: data.user.medicalHistory || "",
       });
@@ -188,9 +188,9 @@ function ProfilePage() {
     toast.success("Dentist preference removed");
   };
 
-  useEffect(() =>{
-    window.scrollTo(0,0)
-  },[])
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -279,7 +279,7 @@ function ProfilePage() {
               <Label htmlFor="dob">Date of Birth</Label>
               <Input
                 id="dob"
-                type="date"
+                type={!isEditing ? "string" : "date"}
                 disabled={!isEditing}
                 {...register("dob", { required: "Date of birth is required" })}
               />
@@ -428,7 +428,9 @@ function ProfilePage() {
                       >
                         Cancel
                       </Button>
-                      <Button type="submit" className="bg-mainCustomColor">Update Password</Button>
+                      <Button type="submit" className="bg-mainCustomColor">
+                        Update Password
+                      </Button>
                     </div>
                   </form>
                 </DialogContent>
@@ -437,7 +439,9 @@ function ProfilePage() {
 
             {isEditing && (
               <div className="flex justify-end">
-                <Button type="submit" className="bg-mainCustomColor">Save Changes</Button>
+                <Button type="submit" className="bg-mainCustomColor">
+                  Save Changes
+                </Button>
               </div>
             )}
           </form>

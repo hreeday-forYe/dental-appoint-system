@@ -8,6 +8,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import sendMail from "../utils/sendMail.js";
 import { format } from "date-fns";
+import cron from "node-cron";
 class AppointmentController {
   static bookAppointment = asyncHandler(async (req, res, next) => {
     try {
@@ -88,12 +89,6 @@ class AppointmentController {
       // const formattedDate = new Date(date).toISOString().split("T")[0];
       const formattedDate = new Date(date).toISOString().split("T")[0];
 
-      // console.log("Checking appointment for:", {
-      //   dentistId,
-      //   formattedDate,
-      //   time,
-      // });
-
       const existingAppointment = await Appointment.findOne({
         dentist: dentistId,
         date: { $gte: formattedDate }, // Ensure date format matches DB
@@ -173,11 +168,10 @@ class AppointmentController {
           },
         });
 
-      // Sending mail to the user Functionality
-      // SEND MAIL TO THE EMAIL OF THE ADDED DISTRIBUTOR
       // Format the date and time using date-fns
       const formattedDate = format(new Date(appointment.date), "do MMMM yyyy");
       const formattedTime = appointment.timeSlot;
+      // Sending mail to the user Functionality
       const mailData = {
         userName: appointment.user.name,
         dentistName: appointment.dentist.user.name,
@@ -194,9 +188,9 @@ class AppointmentController {
 
       const html = await ejs.renderFile(mailPath, mailData);
 
-      // Sending the mail to the distributor for his account creation
+      // Sending the mail to the user after the approved appointment
       try {
-        if (appointment && appointment.status==='Confirmed') {
+        if (appointment && appointment.status === "Confirmed") {
           await sendMail({
             email: appointment.user.email,
             subject: "Appointment Confirmation",
@@ -217,6 +211,58 @@ class AppointmentController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
+
+  static cancelAppointment = asyncHandler(async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const { reason } = req.body;
+      const appointment = await Appointment.findById(id);
+
+
+      if (!appointment) {
+        return next(new ErrorHandler("Appointment not found", 404));
+      }
+
+      if (appointment.status === "Cancelled") {
+        return res.status(400).json({
+          success: false,
+          message: "Appointment is already cancelled.",
+        });
+      }
+
+      appointment.status = "Cancelled";
+      appointment.cancellationReason = reason;
+      await appointment.save();
+      return res.status(200).json({
+        success: true,
+        message: "Appointment cancelled successfully.",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
 }
+const updateExpiredAppointments = async () => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const expiredAppointments = await Appointment.updateMany(
+      { date: { $lt: today }, status: { $in: ["Pending", "Confirmed"] } },
+      { $set: { status: "Completed" } }
+    );
+
+    console.log(
+      `${expiredAppointments.modifiedCount} appointments updated to Completed.`
+    );
+  } catch (error) {
+    console.error("Error updating appointments:", error);
+  }
+};
+// Schedule the job to run at midnight every day
+cron.schedule("0 0 * * *", () => {
+  console.log("Running scheduled appointment update...");
+  updateExpiredAppointments();
+});
 
 export default AppointmentController;

@@ -34,5 +34,11 @@ appointmentRouter.put(
   authorizeRoles("dentist"),
   AppointmentController.approveAppointmentDentist
 );
+appointmentRouter.put(
+  "/cancel/:id",
+  isAuthenticated,
+  authorizeRoles("dentist", "user"),
+  AppointmentController.cancelAppointment
+);
 
 export default appointmentRouter;

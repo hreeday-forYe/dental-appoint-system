@@ -12,15 +12,17 @@ import {
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import CancelAppointment from "@/components/CancelAppointment";
 
-const AppointmentCard = ({ appointment }) => {
+const AppointmentCard = ({ appointment, refetch }) => {
   const statusColors = {
     Pending:
-      "bg-yellow-100 text-yellow-800 hover:text-yellow-800 hover:bg-yellow-100 text-sm",
+      "bg-yellow-100 text-yellow-800 hover:text-yellow-800 hover:bg-yellow-200 text-sm",
     Confirmed:
-      "bg-green-100 text-green-800 hover:text-green-800 hover:bg-green-100 text-sm",
+      "bg-blue-100 text-blue-800 hover:text-blue-800 hover:bg-blue-200 text-sm",
     Completed:
-      "bg-emerald-100 text-emerald-800 hover:text-emerald-800 hover:bg-emerald-100 text-sm",
+      "bg-emerald-100 text-emerald-800 hover:text-emerald-800 hover:bg-emerald-200 text-sm",
     Cancelled:
       "bg-red-100 text-red-800 hover:text-cancelled-800 hover:bg-cancelled-100 text-sm",
   };
@@ -31,6 +33,10 @@ const AppointmentCard = ({ appointment }) => {
     Failed: "bg-red-100 text-red-800",
   };
 
+  const handleCancelSuccess = () => {
+    // Refetch appointments or update local state
+    refetch();
+  };
   return (
     <Card className="mb-4 hover:shadow-lg transition-shadow duration-200">
       <CardContent className="p-6">
@@ -100,14 +106,34 @@ const AppointmentCard = ({ appointment }) => {
                 </span>
               </div>
             </div>
-            {appointment.paymentStatus === "Pending" && (
-              <button
-                // onClick={}
-                className="mt-4 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-lg transition"
-              >
-                Pay Now
-              </button>
-            )}
+            <div className="flex gap-6">
+              {appointment.paymentStatus === "Pending" &&
+                appointment.status !== "Completed" &&
+                appointment.status !== "Cancelled" && (
+                  <button
+                    // onClick={}
+                    className="mt-4 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-lg transition"
+                  >
+                    Pay Now
+                  </button>
+                )}
+              {appointment.status !== "Cancelled" &&
+                appointment.status !== "Completed" && (
+                  <CancelAppointment
+                    appointmentId={appointment._id}
+                    onCancelSuccess={handleCancelSuccess}
+                    className="mt-4 bg-red-100 text-red-800 hover:bg-red-300 font-semibold rounded-lg transition"
+                    trigger={
+                      <Button
+                        variant="ghost"
+                        className="mt-4 bg-red-100 text-red-800 hover:bg-red-300 font-semibold rounded-lg transition"
+                      >
+                        Cancel Appointment
+                      </Button>
+                    }
+                  />
+                )}
+            </div>
           </div>
         </div>
       </CardContent>
@@ -116,8 +142,7 @@ const AppointmentCard = ({ appointment }) => {
 };
 
 const MyAppointmentsPage = () => {
-  const { data, isLoading } = useGetUserAppointmentsQuery();
-  console.log(data);
+  const { data, isLoading, refetch } = useGetUserAppointmentsQuery();
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -157,6 +182,7 @@ const MyAppointmentsPage = () => {
                   <AppointmentCard
                     key={appointment._id}
                     appointment={appointment}
+                    refetch={refetch}
                   />
                 ))
               ) : (
