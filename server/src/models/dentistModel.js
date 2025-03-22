@@ -43,6 +43,10 @@ const dentistSchema = new mongoose.Schema(
     bio: {
       type: String,
     },
+    firstLogin:{
+      type:Boolean,
+      default:false
+    }
   },
   { timestamps: true }
 );

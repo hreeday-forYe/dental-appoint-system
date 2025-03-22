@@ -13,6 +13,13 @@ import {
   Calendar,
   Plus,
   UserPlus,
+  Edit,
+  Mail,
+  Award,
+  GraduationCap,
+  DollarSign,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
 import {
   Dialog,
@@ -94,7 +101,7 @@ function AdminAllDentists() {
                 </div>
               )}
               <div>
-                <h3 className="font-semibold">{dentist.user.name}</h3>
+                <h3 className="font-semibold text-teal-700">{dentist.user.name}</h3>
                 <p className="text-sm text-muted-foreground">
                   {dentist.specialization}
                 </p>
@@ -108,11 +115,11 @@ function AdminAllDentists() {
               </p>
             </div>
             <Button
-              className="mt-4 w-full"
+              className="mt-4 w-full border-teal-600 text-teal-800 hover:bg-teal-50"
               variant="outline"
               onClick={() => handleViewDetails(dentist)}
             >
-              <Eye className="mr-2 h-4 w-4" />
+              <Eye className="mr-2 h-4 w-4 text-teal-500" />
               View Details
             </Button>
           </Card>
@@ -227,113 +234,167 @@ function AdminAllDentists() {
         {/* Details Dialog */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           {selectedDentist && (
-            <DialogContent className="sm:max-w-[600px]">
-              <DialogHeader>
-                <DialogTitle>Dentist Details</DialogTitle>
-              </DialogHeader>
-              <div className="grid gap-6">
-                <div className="flex items-center gap-4">
-                  {selectedDentist.user.avatar?.url ? (
-                    <img
-                      src={selectedDentist.user.avatar.url}
-                      alt={selectedDentist.user.name}
-                      className="h-24 w-24 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gray-100">
-                      <UserIcon className="h-12 w-12 text-gray-500" />
+            <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto my-8">
+              <ScrollArea className="h-full">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl pb-2 font-semibold text-gray-600">
+                    Dentist Details
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-8">
+                  {/* Header Section with Avatar and Basic Info */}
+                  <div className="flex items-start gap-6 border-b border-gray-100 pb-6">
+                    {selectedDentist.user.avatar?.url ? (
+                      <img
+                        src={selectedDentist.user.avatar.url}
+                        alt={selectedDentist.user.name}
+                        className="h-28 w-28 rounded-full object-cover ring-2 ring-teal-500/10"
+                      />
+                    ) : (
+                      <div className="flex h-28 w-28 items-center justify-center rounded-full bg-teal-50">
+                        <UserIcon className="h-14 w-14 text-teal-500" />
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-2xl font-semibold text-gray-900">
+                            {selectedDentist.user.name}
+                          </h3>
+                          <p className="text-teal-600 font-medium mt-1">
+                            {selectedDentist.specialization}
+                          </p>
+                        </div>
+                        <Button
+                          onClick={() => handleEditDentist(selectedDentist._id)}
+                          variant="outline"
+                          className="border-teal-500 text-teal-500 hover:bg-teal-50"
+                        >
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit Details
+                        </Button>
+                      </div>
+                      <div className="mt-3 flex items-center gap-3">
+                        <span
+                          className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${
+                            selectedDentist.user.isVerified
+                              ? "bg-teal-50 text-teal-700"
+                              : "bg-yellow-50 text-yellow-700"
+                          }`}
+                        >
+                          {selectedDentist.user.isVerified
+                            ? "Verified"
+                            : "Pending Verification"}
+                        </span>
+                        <span className="text-sm text-gray-500">•</span>
+                        <span className="text-sm text-gray-500">
+                          {selectedDentist.experience} years experience
+                        </span>
+                      </div>
                     </div>
-                  )}
-                  <div>
-                    <h3 className="text-xl font-semibold">
-                      {selectedDentist.user.name}
-                    </h3>
-                    <p className="text-muted-foreground">
-                      {selectedDentist.specialization}
-                    </p>
-                    <div className="mt-2">
-                      <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          selectedDentist.user.isVerified
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
+                  </div>
+
+                  {/* Main Content Grid */}
+                  <div className="grid gap-6">
+                    {/* Contact Information */}
+                    <div className="rounded-lg bg-gray-50 p-4">
+                      <h4 className="text-sm font-semibold text-gray-900 mb-3">
+                        Contact Information
+                      </h4>
+                      <div className="flex items-center text-gray-700">
+                        <Mail className="h-4 w-4 mr-2 text-teal-500" />
+                        {selectedDentist.user.email}
+                      </div>
+                    </div>
+
+                    {/* Professional Details */}
+                    <div className="rounded-lg bg-gray-50 p-4">
+                      <h4 className="text-sm font-semibold text-gray-900 mb-3">
+                        Professional Details
+                      </h4>
+                      <div className="grid gap-3 text-gray-700">
+                        <div className="flex items-center">
+                          <Award className="h-4 w-4 mr-2 text-teal-500" />
+                          <span>NMC Number: {selectedDentist.nmcNumber}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <GraduationCap className="h-4 w-4 mr-2 text-teal-500" />
+                          <span>
+                            Qualifications:{" "}
+                            {selectedDentist.qualifications.join(", ")}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <DollarSign className="h-4 w-4 mr-2 text-teal-500" />
+                          <span>
+                            Consulting Fee: ${selectedDentist.consultingFee}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <Clock className="h-4 w-4 mr-2 text-teal-500" />
+                          <span>
+                            Appointment Duration: {selectedDentist.slotDuration}{" "}
+                            minutes
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Working Hours */}
+                    <div className="rounded-lg bg-gray-50 p-4">
+                      <h4 className="text-sm font-semibold text-gray-900 mb-3">
+                        Working Schedule
+                      </h4>
+                      <div className="grid gap-3 text-gray-700">
+                        <div className="flex items-center">
+                          <Clock className="h-4 w-4 mr-2 text-teal-500" />
+                          <span>
+                            {formatWorkingHours(selectedDentist.workingHours)}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <Calendar className="h-4 w-4 mr-2 text-teal-500" />
+                          <span>
+                            {formatWorkingDays(selectedDentist.workingHours)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Bio */}
+                    {selectedDentist.bio && (
+                      <div className="rounded-lg bg-gray-50 p-4">
+                        <h4 className="text-sm font-semibold text-gray-900 mb-3">
+                          About
+                        </h4>
+                        <p className="text-gray-700 leading-relaxed">
+                          {selectedDentist.bio}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Approval Actions */}
+                  {selectedDentist.user.isVerified === false && (
+                    <div className="flex gap-4 pt-4 border-t border-gray-100">
+                      <Button
+                        className="flex-1 bg-teal-500 hover:bg-teal-600"
+                        onClick={() => handleStatusChange(selectedDentist._id)}
                       >
-                        {selectedDentist.user.isVerified
-                          ? "Verified"
-                          : "Pending Verification"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid gap-4">
-                  <div className="grid gap-2">
-                    <h4 className="font-semibold">Contact Information</h4>
-                    <p className="text-sm">
-                      Email: {selectedDentist.user.email}
-                    </p>
-                  </div>
-
-                  <div className="grid gap-2">
-                    <h4 className="font-semibold">Professional Details</h4>
-                    <p className="text-sm">
-                      Experience: {selectedDentist.experience} years
-                    </p>
-                    <p className="text-sm">
-                      NMC Number: {selectedDentist.nmcNumber}
-                    </p>
-                    <p className="text-sm">
-                      Qualifications:{" "}
-                      {selectedDentist.qualifications.join(", ")}
-                    </p>
-                    <p className="text-sm">
-                      Consulting Fee: ${selectedDentist.consultingFee}
-                    </p>
-                    <p className="text-sm">
-                      Appointment Duration: {selectedDentist.slotDuration}{" "}
-                      minutes
-                    </p>
-                  </div>
-
-                  <div className="grid gap-2">
-                    <h4 className="font-semibold">Working Time</h4>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Clock className="h-4 w-4" />
-                      {formatWorkingHours(selectedDentist.workingHours)}
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Calendar className="h-4 w-4" />
-                      {formatWorkingDays(selectedDentist.workingHours)}
-                    </div>
-                  </div>
-
-                  {selectedDentist.bio && (
-                    <div className="grid gap-2">
-                      <h4 className="font-semibold">Bio</h4>
-                      <p className="text-sm">{selectedDentist.bio}</p>
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        Approve
+                      </Button>
+                      <Button
+                        className="flex-1 bg-white border-2 border-red-500 text-red-500 hover:bg-red-50"
+                        onClick={() => handleStatusChange(selectedDentist._id)}
+                      >
+                        <XCircle className="h-4 w-4 mr-2" />
+                        Reject
+                      </Button>
                     </div>
                   )}
                 </div>
-
-                {selectedDentist.user.isVerified === false && (
-                  <div className="flex gap-4 mt-4">
-                    <Button
-                      className="flex-1 bg-green-500 hover:bg-green-600"
-                      onClick={() => handleStatusChange(selectedDentist._id)}
-                    >
-                      Approve
-                    </Button>
-                    <Button
-                      className="flex-1"
-                      variant="destructive"
-                      onClick={() => handleStatusChange(selectedDentist._id)}
-                    >
-                      Reject
-                    </Button>
-                  </div>
-                )}
-              </div>
+              </ScrollArea>
             </DialogContent>
           )}
         </Dialog>

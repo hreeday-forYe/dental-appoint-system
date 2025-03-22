@@ -6,14 +6,15 @@ const dentistRouter = express.Router();
 dentistRouter.post(
   "/register-dentist",
   isAuthenticated,
-  authorizeRoles("admin", "user"),
+  authorizeRoles("user"),
   DentistController.registerDentist
 );
 dentistRouter.get("/", DentistController.fetchAllDentist);
 
 dentistRouter.get("/:id", DentistController.fetchSingleDentist);
-dentistRouter.put("/verify/:id", DentistController.verifyDentist);
 
-dentistRouter.put("/:id", DentistController.manageAvailability);
+dentistRouter.put("/verify/:id", isAuthenticated, authorizeRoles('admin'), DentistController.verifyDentist);
+
+dentistRouter.put("/:id", isAuthenticated, authorizeRoles('dentist'), DentistController.manageAvailability);
 
 export default dentistRouter;

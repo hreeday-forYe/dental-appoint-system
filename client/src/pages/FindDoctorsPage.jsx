@@ -51,10 +51,13 @@ export default function FindDoctorsPage() {
   const [selectedSpecialization, setSelectedSpecialization] = useState('All');
   const [sortBy, setSortBy] = useState('experience');
   const {data, isLoading} = useGetAllDentistsQuery()
-  const dentists = data?.dentists || mockDentists
+  console.log(data);
+  let dentists = Array.isArray(data?.dentists) ? data.dentists : [];
+  dentists = [...dentists].reverse();
+  console.log(dentists);
 
   const filteredDentists = dentists?.filter(dentist => {
-    const matchesSearch = dentist.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch = dentist.user?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       dentist.specialization.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesSpecialization = selectedSpecialization === 'All' || 
       dentist.specialization === selectedSpecialization;

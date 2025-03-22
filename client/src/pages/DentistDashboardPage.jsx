@@ -24,6 +24,7 @@ import {
   User,
   LogOut,
   Mail,
+  Phone,
 } from "lucide-react";
 // import DashboardStats from '../components/DashboardStats';
 // import MetricCard from '../components/MetricCard';
@@ -186,7 +187,7 @@ function AppointmentCard({ appointment, onConfirm }) {
     Rejected: "bg-red-100 text-red-800 border-red-200",
     Completed: "bg-blue-100 text-blue-800 border-blue-200",
   };
-  
+
   return (
     <Card className="overflow-hidden transition-all hover:shadow-lg">
       <CardContent className="p-6">
@@ -321,7 +322,7 @@ export default function DentistDashboardPage() {
       const response = await changeAppointment(id).unwrap();
       if (response.success) {
         toast.success("Appointment Confirmed");
-        refetch()
+        refetch();
       }
     } catch (error) {
       toast.error(error.message);

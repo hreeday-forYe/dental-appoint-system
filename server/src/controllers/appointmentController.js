@@ -114,43 +114,6 @@ class AppointmentController {
     }
   });
 
-  static fetchUserAppointments = asyncHandler(async (req, res, next) => {
-    try {
-      const userId = req.user._id;
-      const appointments = await Appointment.find({ user: userId }).populate({
-        path: "dentist",
-        select: "experience qualifications specialization",
-        populate: {
-          path: "user",
-          select: "name email phone avatar role",
-        },
-      });
-      return res.status(200).json({
-        success: true,
-        appointments,
-      });
-    } catch (error) {
-      return next(new ErrorHandler(error.message));
-    }
-  });
-
-  static fetchDentistAppointments = asyncHandler(async (req, res, next) => {
-    try {
-      const userId = req.user._id;
-      const dentist = await Dentist.findOne({ user: userId });
-      // console.log(dentist);
-      const appointments = await Appointment.find({
-        dentist: dentist._id,
-      }).populate("user", "name email phone avatar role");
-      return res.status(200).json({
-        success: true,
-        appointments,
-      });
-    } catch (error) {
-      return next(new ErrorHandler(error.message, 500));
-    }
-  });
-
   static approveAppointmentDentist = asyncHandler(async (req, res, next) => {
     try {
       const { id } = req.params;
@@ -218,7 +181,6 @@ class AppointmentController {
       const { reason } = req.body;
       const appointment = await Appointment.findById(id);
 
-
       if (!appointment) {
         return next(new ErrorHandler("Appointment not found", 404));
       }
@@ -233,6 +195,9 @@ class AppointmentController {
       appointment.status = "Cancelled";
       appointment.cancellationReason = reason;
       await appointment.save();
+      // TODO: Send mail to the user Profile if the dentist has cancelled the appointment
+
+      // TODO: NOtificaiton for the admin and the dentits if the user has cancelled the appointment
       return res.status(200).json({
         success: true,
         message: "Appointment cancelled successfully.",
@@ -241,7 +206,46 @@ class AppointmentController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
+
+  static fetchUserAppointments = asyncHandler(async (req, res, next) => {
+    try {
+      const userId = req.user._id;
+      const appointments = await Appointment.find({ user: userId }).populate({
+        path: "dentist",
+        select: "experience qualifications specialization",
+        populate: {
+          path: "user",
+          select: "name email phone avatar role",
+        },
+      });
+      return res.status(200).json({
+        success: true,
+        appointments,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message));
+    }
+  });
+
+  static fetchDentistAppointments = asyncHandler(async (req, res, next) => {
+    try {
+      const userId = req.user._id;
+      const dentist = await Dentist.findOne({ user: userId });
+      // console.log(dentist);
+      const appointments = await Appointment.find({
+        dentist: dentist._id,
+      }).populate("user", "name email phone avatar role");
+      return res.status(200).json({
+        success: true,
+        appointments,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
 }
+
+// Automatic update handling 
 const updateExpiredAppointments = async () => {
   try {
     const today = new Date();

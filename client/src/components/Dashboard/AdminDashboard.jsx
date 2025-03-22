@@ -24,17 +24,30 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ScrollArea } from "../ui/scroll-area";
+import {
+  useFetchAllAppointmentsQuery,
+  useFetchAllUsersQuery,
+} from "@/app/slices/adminApiSlice";
+import { useGetAllDentistsQuery } from "@/app/slices/dentistApiSlice";
 
 function AdminDashboard() {
   const [timeRange, setTimeRange] = useState("today");
 
+  // Get the users, dentist and appointments
+  const { data: userData, isLoading } = useFetchAllUsersQuery();
+  const { data: appointmentData } = useFetchAllAppointmentsQuery();
+  const { data: dentistData } = useGetAllDentistsQuery();
+  const users = Array.isArray(userData?.users) ? userData.users : [];
+  const recentUsers = [...users].reverse().slice(0, 4);
+  const appointments = Array.isArray(appointmentData?.appointments) ? appointmentData.appointments : [];
+  const recentAppointments = [...appointments].reverse().slice(0, 4);
   // Mock data - replace with actual API calls
   const stats = {
-    totalUsers: 1250,
-    activeUsers: 890,
-    totalDentists: 45,
-    pendingDentists: 8,
-    todayAppointments: 32,
+    totalUsers: users?.length,
+    activeUsers: users?.length,
+    totalDentists: dentistData?.dentists.length,
+    pendingDentists: 0,
+    totalAppointments: appointments.length,
     completedAppointments: 24,
     cancelledAppointments: 3,
     upcomingAppointments: 5,
@@ -81,7 +94,7 @@ function AdminDashboard() {
     },
   ];
 
-  const recentAppointments = [
+  const recentAppointments1 = [
     {
       id: 1,
       patientName: "John Smith",
@@ -111,7 +124,7 @@ function AdminDashboard() {
     },
   ];
 
-  const recentUsers = [
+  const recentUsers1 = [
     {
       id: 1,
       name: "Alice Cooper",
@@ -175,27 +188,6 @@ function AdminDashboard() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               {/* <Card className="p-6">
                 <div className="flex items-center gap-4">
-                  <div className="rounded-full bg-green-100 p-3 dark:bg-green-900">
-                    <DollarSign className="h-6 w-6 text-green-700 dark:text-green-300" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      Total Revenue
-                    </p>
-                    <div className="flex items-baseline gap-2">
-                      <p className="text-2xl font-bold">
-                        ${financialStats.totalRevenue.toLocaleString()}
-                      </p>
-                      <p className="text-sm text-green-600">
-                        +{financialStats.revenueGrowth}%
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </Card> */}
-
-              {/* <Card className="p-6">
-                <div className="flex items-center gap-4">
                   <div className="rounded-full bg-blue-100 p-3 dark:bg-blue-900">
                     <CreditCard className="h-6 w-6 text-blue-700 dark:text-blue-300" />
                   </div>
@@ -256,6 +248,26 @@ function AdminDashboard() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               <Card className="p-6">
                 <div className="flex items-center gap-4">
+                  <div className="rounded-full bg-green-100 p-3 dark:bg-green-900">
+                    <DollarSign className="h-6 w-6 text-green-700 dark:text-green-300" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">
+                      Total Revenue
+                    </p>
+                    <div className="flex items-baseline gap-2">
+                      <p className="text-2xl font-bold">
+                        ${financialStats.totalRevenue.toLocaleString()}
+                      </p>
+                      <p className="text-sm text-green-600">
+                        +{financialStats.revenueGrowth}%
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+              <Card className="p-6">
+                <div className="flex items-center gap-4">
                   <div className="rounded-full bg-blue-100 p-3 dark:bg-blue-900">
                     <Users className="h-6 w-6 text-blue-700 dark:text-blue-300" />
                   </div>
@@ -297,15 +309,13 @@ function AdminDashboard() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">
-                      Today's Appointments
+                      Total Appointments
                     </p>
                     <div className="flex items-baseline gap-2">
                       <p className="text-2xl font-bold">
-                        {stats.todayAppointments}
+                        {stats.totalAppointments}
                       </p>
-                      <p className="text-sm text-muted-foreground">
-                        ({stats.completedAppointments} completed)
-                      </p>
+                      
                     </div>
                   </div>
                 </div>
@@ -336,7 +346,7 @@ function AdminDashboard() {
             {/* Recent Activity */}
             <div className="grid gap-6 lg:grid-cols-2">
               {/* Recent Payments */}
-              {/* <Card className="p-6">
+              <Card className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-semibold">Recent Payments</h2>
                   <Button variant="ghost" className="text-sm">
@@ -377,10 +387,10 @@ function AdminDashboard() {
                     </div>
                   ))}
                 </div>
-              </Card> */}
+              </Card>
 
               {/* Recent Appointments */}
-              {/* <Card className="p-6">
+              <Card className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-semibold">Recent Appointments</h2>
                   <Button variant="ghost" className="text-sm">
@@ -395,15 +405,15 @@ function AdminDashboard() {
                       className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0"
                     >
                       <div className="space-y-1">
-                        <p className="font-medium">{appointment.patientName}</p>
+                        <p className="font-medium">{appointment.user.name}</p>
                         <p className="text-sm text-muted-foreground">
-                          with {appointment.dentistName}
+                          with {appointment.dentist.user.name}
                         </p>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <Calendar className="h-4 w-4" />
                           {new Date(appointment.date).toLocaleDateString()}
                           <Clock className="h-4 w-4 ml-2" />
-                          {appointment.time}
+                          {appointment.timeSlot}
                         </div>
                       </div>
                       <div className="text-right">
@@ -415,13 +425,13 @@ function AdminDashboard() {
                           {appointment.status}
                         </span>
                         <p className="text-sm text-muted-foreground mt-1">
-                          {appointment.type}
+                          {appointment.reasonForVisit}
                         </p>
                       </div>
                     </div>
                   ))}
                 </div>
-              </Card> */}
+              </Card>
             </div>
 
             {/* Recent Users */}
@@ -463,7 +473,13 @@ function AdminDashboard() {
                         {user.role}
                       </span>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Joined {new Date(user.joinedDate).toLocaleDateString()}
+                        Joined: {" "}
+                        {new Date(user.createdAt).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                        
                       </p>
                     </div>
                   </div>

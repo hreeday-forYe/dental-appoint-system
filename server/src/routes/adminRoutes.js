@@ -10,20 +10,50 @@ const adminRouter = express.Router();
 adminRouter.post(
   "/",
   isAuthenticated,
-  authorizeRoles('admin'),
+  authorizeRoles("admin"),
   AdminController.registerDentistByAdmin
 );
 
-// Get everything for the details 
+// adminRouter.get(
+//   "/",
+//   isAuthenticated,
+//   authorizeRoles("admin"),
+//   AdminController.fetchDataForDashboard
+// );
+
+// Get everything for the details
 adminRouter.get(
   "/all-users",
   isAuthenticated,
-  authorizeRoles('admin'),
+  authorizeRoles("admin"),
   AdminController.fetchAllUsersByAdmin
 );
 
-adminRouter.get("/all-appointments", isAuthenticated, authorizeRoles('admin'), AdminController.fetchAllAppointmentsByAdmin)
+// Fetch all the appointments by the admin
+adminRouter.get(
+  "/all-appointments",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  AdminController.fetchAllAppointmentsByAdmin
+);
 
-
+adminRouter.post(
+  "/add-user",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  AdminController.addUserByAdmin
+);
+adminRouter.put(
+  "/edit-user/:id",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  AdminController.editUserByAdmin
+);
+adminRouter.put(
+  "/ban-user/:id",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  AdminController.banUserByAdmin
+);
 
 export default adminRouter;
