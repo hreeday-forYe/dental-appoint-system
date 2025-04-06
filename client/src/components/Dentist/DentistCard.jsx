@@ -1,81 +1,181 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   Calendar,
   Clock,
   GraduationCap,
   Stethoscope,
-  DollarSign,
+  IndianRupee,
+  MapPin,
+  Phone,
+  Mail,
+  Star,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { format } from "date-fns";
+
 
 export default function DentistCard({ dentist }) {
+  const getInitials = (name) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
+  };
+
+  const getAge = (dob) => {
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
+  const formatWorkingDays = (days) => {
+    if (days.length === 5 && days.every((day, i) => day === ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'][i])) {
+      return "Mon - Fri";
+    }
+    return days.map(day => day.slice(0, 3)).join(", ");
+  };
+
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 w-full sm:w-[48%] lg:w-[30%] p-4">
-      <div className="flex items-start space-x-4">
-        <img
-          src={
-            dentist.user.avatar?.url ||
-            "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3"
-          }
-          alt={dentist.user.name}
-          className="w-20 h-20 rounded-lg object-cover"
-        />
-        <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900">
-            {dentist.user.name}
-          </h3>
-          <div className="flex items-center space-x-2 mt-1 text-sm text-gray-600">
-            <Stethoscope className="w-4 h-4 text-blue-600" />
-            <span>{dentist.specialization}</span>
-          </div>
-          <div className="flex items-center space-x-2 mt-1 text-sm text-gray-600">
-            <GraduationCap className="w-4 h-4 text-blue-600" />
-            <span>{dentist.experience} yrs experience</span>
+    <Card className="overflow-hidden transition-all hover:shadow-lg bg-card">
+      <CardContent className="p-6">
+        <div className="flex items-start gap-4">
+          <Avatar className="h-24 w-24 rounded-xl">
+            <AvatarImage
+              src={
+                dentist.user.avatar?.url ||
+                "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3"
+              }
+              alt={dentist.user.name}
+              className="object-cover"
+            />
+            <AvatarFallback className="text-xl bg-primary/10">
+              {getInitials(dentist.user.name)}
+            </AvatarFallback>
+          </Avatar>
+          
+          <div className="flex-1 space-y-2">
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="font-semibold text-xl text-foreground">
+                  {dentist.user.name}
+                </h3>
+                {/* <p className="text-sm text-muted-foreground">
+                  Age: {getAge(dentist.user.dob)} years
+                </p> */}
+              <Badge variant="outline" className="text-primary border-primary">
+                NMC: {dentist.nmcNumber}
+              </Badge>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <div className="flex items-center gap-1.5">
+                      <Stethoscope className="h-4 w-4 text-primary" />
+                      <span className="capitalize text-sm">{dentist.specialization}</span>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>Specialization</TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger>
+                    <div className="flex items-center gap-1.5">
+                      <Star className="h-4 w-4 text-amber-500" />
+                      <span className="text-sm">{dentist.experience} years exp.</span>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>Years of Experience</TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger>
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="h-4 w-4 text-blue-500" />
+                      <span className="text-sm">{dentist.slotDuration} min slot</span>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>Consultation Duration</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1.5">
+                <Phone className="h-4 w-4" />
+                <span>{dentist.user.phone}</span>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="mt-4 border-t border-gray-200 pt-3 text-sm text-gray-600">
-        <div className="flex justify-between">
-          <div className="flex items-center space-x-1">
-            <Clock className="w-4 h-4 text-gray-500" />
-            <span>
-              {dentist.workingHours.startTime} - {dentist.workingHours.endTime}
+        <Separator className="my-4" />
+
+        <div className="space-y-3">
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-2 bg-primary/5 px-3 py-1.5 rounded-lg">
+              <Clock className="h-4 w-4 text-primary" />
+              <span>{dentist.workingHours.startTime} - {dentist.workingHours.endTime}</span>
+            </div>
+            <div className="flex items-center gap-2 bg-primary/5 px-3 py-1.5 rounded-lg">
+              <Calendar className="h-4 w-4 text-primary" />
+              <span>{formatWorkingDays(dentist.workingHours.days)}</span>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {dentist.qualifications.map((qualification, index) => (
+              <Badge
+                key={index}
+                variant="secondary"
+                className="bg-blue-500/10 text-blue-700 hover:bg-blue-500/20"
+              >
+                <GraduationCap className="h-3 w-3 mr-1" />
+                {qualification}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      </CardContent>
+
+      <CardFooter className="p-6 pt-0 flex items-center justify-between bg-muted/10">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
+            <IndianRupee className="h-4 w-4 text-green-600" />
+            <span className="text-xl font-semibold text-green-600">
+              {dentist.consultingFee}
             </span>
           </div>
-          <div className="flex items-center space-x-1">
-            <Calendar className="w-4 h-4 text-gray-500" />
-            <span>{dentist.workingHours.days.slice(0, 3).join(", ")}...</span>
-          </div>
+          <Badge variant="outline" className="text-green-600 border-green-600">
+            Per Visit
+          </Badge>
         </div>
-      </div>
 
-      <p className="mt-2 text-xs text-gray-600 line-clamp-2">{dentist.bio}</p>
-
-      <div className="mt-2 flex flex-wrap gap-1 text-xs">
-        {dentist.qualifications.map((qualification, index) => (
-          <span
-            key={index}
-            className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full"
-          >
-            {qualification}
-          </span>
-        ))}
-      </div>
-
-      <div className="mt-4 flex justify-between items-center">
-        <p className="text-gray-500">
-          Consulting fees :
-          <span className="text-lg font-semibold text-green-600">
-            Rs.{dentist.consultingFee}
-          </span>
-        </p>
         <Link to={`/dentist/${dentist._id}`}>
-        <button className="bg-teal-500 text-white px-3 py-2 rounded-md text-sm hover:bg-teal-700 transition">
-          Book Appointment
-        </button>
+          <Button size="lg" className="bg-mainCustomColor hover:bg-teal-600">
+            Book Appointment
+          </Button>
         </Link>
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   );
 }

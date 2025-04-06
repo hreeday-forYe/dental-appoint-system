@@ -26,6 +26,13 @@ export const adminApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
     }),
+    fetchAllPayments: builder.query({
+      query: () => ({
+        url: `${admin_url}/all-payments`,
+        method: "GET",
+        credentials: "include",
+      }),
+    }),
     adminAddUser: builder.mutation({
       query: (data) => ({
         url: `${admin_url}/add-user`,
@@ -49,6 +56,7 @@ export const adminApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
     }),
+
   }),
 });
 
@@ -58,5 +66,6 @@ export const {
   useFetchAllAppointmentsQuery,
   useAdminAddUserMutation,
   useAdminEditUserMutation,
-  useAdminBanUserMutation
+  useAdminBanUserMutation,
+  useFetchAllPaymentsQuery,
 } = adminApiSlice;

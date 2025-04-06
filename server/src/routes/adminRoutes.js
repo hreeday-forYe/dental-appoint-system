@@ -14,12 +14,12 @@ adminRouter.post(
   AdminController.registerDentistByAdmin
 );
 
-// adminRouter.get(
-//   "/",
-//   isAuthenticated,
-//   authorizeRoles("admin"),
-//   AdminController.fetchDataForDashboard
-// );
+adminRouter.get(
+  "/all-payments",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  AdminController.fetchAllPaymentsByAdmin
+);
 
 // Get everything for the details
 adminRouter.get(

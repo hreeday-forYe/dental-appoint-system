@@ -41,4 +41,16 @@ appointmentRouter.put(
   AppointmentController.cancelAppointment
 );
 
+appointmentRouter.post(
+  "/initiate-payment",
+  isAuthenticated,
+  authorizeRoles("user"),
+  AppointmentController.initiatePayment
+);
+
+appointmentRouter.get(
+  "/complete-payment",
+  isAuthenticated,
+  AppointmentController.completePayment
+);
 export default appointmentRouter;

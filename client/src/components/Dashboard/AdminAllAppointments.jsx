@@ -13,129 +13,55 @@ import {
 import { useFetchAllAppointmentsQuery } from "@/app/slices/adminApiSlice";
 import { ScrollArea } from "../ui/scroll-area";
 
-// Mock data based on your MongoDB schema
-// const mockAppointments = [
-//   {
-//     _id: "1",
-//     user: { name: "John Doe", email: "john@example.com" },
-//     dentist: {
-//       user: { name: "Dr. Sarah Smith", email: "dr.sarah@example.com" },
-//     },
-//     date: new Date("2025-06-15T10:00:00"),
-//     timeSlot: "10:00 AM - 10:30 AM",
-//     duration: 30,
-//     status: "Pending",
-//     reasonForVisit: "Routine Checkup",
-//     paymentStatus: "Pending",
-//     paymentMethod: "Cash",
-//     fees: 1500,
-//     createdAt: new Date("2025-06-10T08:30:00"),
-//   },
-//   {
-//     _id: "2",
-//     user: { name: "Jane Smith", email: "jane@example.com" },
-//     dentist: {
-//       user: { name: "Dr. Michael Johnson", email: "dr.michael@example.com" },
-//     },
-//     date: new Date("2025-06-16T14:00:00"),
-//     timeSlot: "2:00 PM - 2:30 PM",
-//     duration: 30,
-//     status: "Confirmed",
-//     reasonForVisit: "Tooth Extraction",
-//     paymentStatus: "Paid",
-//     paymentMethod: "Khalti",
-//     fees: 2500,
-//     createdAt: new Date("2025-06-11T09:15:00"),
-//   },
-//   {
-//     _id: "3",
-//     user: { name: "Robert Brown", email: "robert@example.com" },
-//     dentist: {
-//       user: { name: "Dr. Sarah Smith", email: "dr.sarah@example.com" },
-//     },
-//     date: new Date("2025-06-14T11:30:00"),
-//     timeSlot: "11:30 AM - 12:00 PM",
-//     duration: 30,
-//     status: "Completed",
-//     reasonForVisit: "Dental Cleaning",
-//     paymentStatus: "Paid",
-//     paymentMethod: "Cash",
-//     fees: 1800,
-//     createdAt: new Date("2025-06-09T14:20:00"),
-//   },
-//   {
-//     _id: "4",
-//     user: { name: "Emily Wilson", email: "emily@example.com" },
-//     dentist: {
-//       user: { name: "Dr. Michael Johnson", email: "dr.michael@example.com" },
-//     },
-//     date: new Date("2025-06-17T09:00:00"),
-//     timeSlot: "9:00 AM - 9:30 AM",
-//     duration: 30,
-//     status: "Cancelled",
-//     cancellationReason: "Patient unavailable",
-//     reasonForVisit: "Root Canal",
-//     paymentStatus: "Refunded",
-//     paymentMethod: "Khalti",
-//     fees: 3500,
-//     createdAt: new Date("2025-06-12T10:45:00"),
-//   },
-//   {
-//     _id: "5",
-//     user: { name: "David Clark", email: "david@example.com" },
-//     dentist: {
-//       user: { name: "Dr. Sarah Smith", email: "dr.sarah@example.com" },
-//     },
-//     date: new Date("2025-06-18T13:30:00"),
-//     timeSlot: "1:30 PM - 2:00 PM",
-//     duration: 30,
-//     status: "Pending",
-//     reasonForVisit: "Consultation",
-//     paymentStatus: "Pending",
-//     paymentMethod: "Cash",
-//     fees: 1000,
-//     createdAt: new Date("2025-06-13T16:10:00"),
-//   },
-// ];
-
 function AdminAllAppointments() {
   // const [appointments, setAppointments] = useState([]);
   // const [loading, setLoading] = useState(true);
+  // const [filter, setFilter] = useState("All");
+  // const [searchTerm, setSearchTerm] = useState("");
+  // const [selectedAppointment, setSelectedAppointment] = useState(null);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
+  // const { data, isLoading } = useFetchAllAppointmentsQuery();
+  // const appointments = data?.appointments;
+
   const [filter, setFilter] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { data, isLoading } = useFetchAllAppointmentsQuery();
-  const appointments = data?.appointments;
 
-  // const handleStatusChange = (id, newStatus) => {
-  //   // In a real application, you would update the status via API
-  //   // Example: fetch(`/api/appointments/${id}`, {
-  //   //   method: 'PATCH',
-  //   //   headers: { 'Content-Type': 'application/json' },
-  //   //   body: JSON.stringify({ status: newStatus })
-  //   // })
+  // Fetch appointments
+  const { data, isLoading, refetch } = useFetchAllAppointmentsQuery();
+  const appointments = data?.appointments || [];
 
-  //   // For demonstration, update the local state
-  //   setAppointments(
-  //     appointments.map((appointment) =>
-  //       appointment._id === id
-  //         ? { ...appointment, status: newStatus }
-  //         : appointment
-  //     )
-  //   );
-  // };
+  // Mutation for updating appointments
+  // const [updateAppointment] = useUpdateAppointmentMutation();
 
-  // const handlePaymentStatusChange = (id, newStatus) => {
-  //   // Similar to status change, but for payment status
-  //   setAppointments(
-  //     appointments.map((appointment) =>
-  //       appointment._id === id
-  //         ? { ...appointment, paymentStatus: newStatus }
-  //         : appointment
-  //     )
-  //   );
-  // };
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      const res = await updateAppointment({
+        appointmentId: id,
+        data: { status: newStatus },
+      }).unwrap();
+
+      toast.success("Appointment status updated successfully");
+      refetch(); // Refresh the appointments list
+    } catch (err) {
+      toast.error(err?.data?.message || "Failed to update status");
+    }
+  };
+
+  const handlePaymentStatusChange = async (id, newPaymentStatus) => {
+    try {
+      const res = await updateAppointment({
+        appointmentId: id,
+        data: { paymentStatus: newPaymentStatus },
+      }).unwrap();
+
+      toast.success("Payment status updated successfully");
+      refetch(); // Refresh the appointments list
+    } catch (err) {
+      toast.error(err?.data?.message || "Failed to update payment status");
+    }
+  };
 
   const openModal = (appointment) => {
     setSelectedAppointment(appointment);
@@ -572,21 +498,28 @@ function AdminAllAppointments() {
                           Status:
                         </span>
                         <div className="mt-1">
-                          <select
+                          {/* <select
                             value={selectedAppointment.status}
-                            // onChange={(e) =>
-                            //   handleStatusChange(
-                            //     selectedAppointment._id,
-                            //     e.target.value
-                            //   )
-                            // }
+                            onChange={(e) =>
+                              handleStatusChange(
+                                selectedAppointment._id,
+                                e.target.value
+                              )
+                            }
                             className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
                           >
                             <option value="Pending">Pending</option>
                             <option value="Confirmed">Confirmed</option>
                             <option value="Completed">Completed</option>
                             <option value="Cancelled">Cancelled</option>
-                          </select>
+                          </select> */}
+                          <p
+                            className={`${getStatusColor(
+                              selectedAppointment.status
+                            )} rounded-lg p-1 inline`}
+                          >
+                            {selectedAppointment.status}
+                          </p>
                         </div>
                       </div>
                       {selectedAppointment.status === "Cancelled" &&
@@ -605,20 +538,13 @@ function AdminAllAppointments() {
                           Payment Status:
                         </span>
                         <div className="mt-1">
-                          <select
-                            value={selectedAppointment.paymentStatus}
-                            // onChange={(e) =>
-                            //   handlePaymentStatusChange(
-                            //     selectedAppointment._id,
-                            //     e.target.value
-                            //   )
-                            // }
-                            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                          <p
+                            className={`${getPaymentStatusColor(
+                              selectedAppointment.paymentStatus
+                            )} rounded-lg p-1 inline`}
                           >
-                            <option value="Pending">Pending</option>
-                            <option value="Paid">Paid</option>
-                            <option value="Refunded">Refunded</option>
-                          </select>
+                            {selectedAppointment.paymentStatus}
+                          </p>
                         </div>
                       </div>
                       <div>
@@ -641,7 +567,7 @@ function AdminAllAppointments() {
                   </div>
                 </div>
 
-                <div className="mt-8 flex justify-end space-x-3">
+                {/* <div className="mt-8 flex justify-end space-x-3">
                   <button
                     onClick={closeModal}
                     className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
@@ -651,13 +577,13 @@ function AdminAllAppointments() {
                   <button
                     onClick={() => {
                       // In a real app, you would save changes to the API here
-                      closeModal();
+                      handleAppointmentStatusChange();
                     }}
                     className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
                   >
                     Save Changes
                   </button>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

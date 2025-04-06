@@ -15,6 +15,7 @@ import {
   AdminAllUsers,
   AdminAllDentists,
   AdminAddDentist,
+  AdminAllPayments
 } from "./components";
 import {
   HomePage,
@@ -33,6 +34,8 @@ import AuthLayout from "./routes/AuthLayout";
 import AdminLayout from "./routes/AdminLayout";
 import DentistLayout from "./routes/DentistLayout";
 import AdminAllAppointments from "./components/Dashboard/AdminAllAppointments";
+import DentistDashboard from "./components/Dentist/DentistDashboard";
+import DentistPatients from "./components/Dentist/DentistPatients";
 
 const router = createBrowserRouter([
   {
@@ -167,6 +170,14 @@ const router = createBrowserRouter([
         ),
       }, // Default admin dashboard
       {
+        path: "all-payments",
+        element: (
+          <AdminLayout>
+            <AdminAllPayments />
+          </AdminLayout>
+        ),
+      }, // Default admin dashboard
+      {
         path: "add-dentist",
         element: (
           <AdminLayout>
@@ -184,7 +195,7 @@ const router = createBrowserRouter([
         index: true,
         element: (
           <DentistLayout>
-            <AdminDashboard />
+            <DentistDashboard />
           </DentistLayout>
         ),
       }, // Default Dentist Dashboard page
@@ -193,6 +204,14 @@ const router = createBrowserRouter([
         element: (
           <DentistLayout>
             <DentistAppointments />
+          </DentistLayout>
+        ),
+      }, // Default Dentist Dashboard page
+      {
+        path: "patients",
+        element: (
+          <DentistLayout>
+            <DentistPatients />
           </DentistLayout>
         ),
       }, // Default Dentist Dashboard page

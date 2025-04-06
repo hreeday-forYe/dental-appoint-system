@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Confirmed - Smile Sync</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f0f9ff;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      .confirmation-container {
+        background-color: #ffffff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        width: 90%;
+        max-width: 550px;
+      }
+      h1 {
+        color: #0d6e3d;
+        background-color: #e1f7ed;
+        padding: 18px;
+        border-radius: 8px;
+        margin-bottom: 25px;
+        font-size: 28px;
+      }
+      .payment-amount {
+        font-size: 32px;
+        color: #0d6e3d;
+        margin: 25px 0;
+        font-weight: bold;
+      }
+      .payment-details {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 25px 0;
+        text-align: left;
+      }
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+      .detail-label {
+        color: #6c757d;
+        font-weight: 500;
+      }
+      .detail-value {
+        color: #495057;
+        font-weight: 600;
+      }
+      p {
+        color: #555;
+        line-height: 1.6;
+        margin: 15px 0;
+      }
+      .success-icon {
+        font-size: 60px;
+        color: #0d6e3d;
+        margin-bottom: 20px;
+      }
+      .btn {
+        display: inline-block;
+        padding: 14px 30px;
+        background-color: #0d6e3d;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+        font-size: 16px;
+      }
+      .btn:hover {
+        background-color: #0b5a33;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .footer {
+        margin-top: 30px;
+        font-size: 14px;
+        color: #888;
+      }
+      .checkmark {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #e1f7ed;
+        border-radius: 50%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="confirmation-container">
+      <div class="checkmark">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#0d6e3d"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+
+      <h1>Payment Successful!</h1>
+      <p>Hello <strong><%= userName %></strong>,</p>
+
+      <div class="payment-amount">Rs. <%= amount %></div>
+
+      <p>
+        Your online payment has been successfully processed for the following
+        appointment:
+      </p>
+
+      <div class="payment-details">
+        <div class="detail-row">
+          <span class="detail-label">Appointment ID:</span>
+          <span class="detail-value"><%= appointmentId %></span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Dentist:</span>
+          <span class="detail-value">Dr. <%= dentistName %></span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Date:</span>
+          <span class="detail-value"><%= appointmentDate %></span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Time:</span>
+          <span class="detail-value"><%= appointmentTime %></span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Payment Method:</span>
+          <span class="detail-value"><%= paymentMethod %></span>
+        </div>
+      </div>
+
+      <p>
+        A confirmation email has been sent to
+        <strong><%= userEmail %></strong> with all the details. Please keep this
+        information for your records.
+      </p>
+
+      <a href="http://localhost:3000/my-appointments" class="btn">
+        View My Appointments
+      </a>
+
+      <div class="footer">
+        <p>Thank you for choosing Smile Sync!</p>
+        <p>
+          Need help? Contact us at
+          <a href="mailto:support@smilesync.com">support@smilesync.com</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

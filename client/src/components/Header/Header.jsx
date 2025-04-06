@@ -107,11 +107,11 @@ export default function Component() {
             )}
             
             <Link
-              to={authStatus ? "/book-appointment" : "/register"}
+              to={authStatus ? "/all-doctors" : "/register"}
               className="mx-auto"
             >
               <Button className="bg-mainCustomColor hover:bg-teal-700 border">
-                Book Appointment
+                Emergency Appointment
               </Button>
             </Link>
           </div>
@@ -136,7 +136,7 @@ export default function Component() {
         )}
         {authStatus && <HeaderDropdown />}
         <div className="ml-10">
-          <Link to={authStatus ? "book-appointment" : "register"}>
+          <Link to={authStatus ? "all-doctors" : "register"}>
             <Button className="bg-mainCustomColor hover:bg-teal-700">
               Book Appointment
             </Button>

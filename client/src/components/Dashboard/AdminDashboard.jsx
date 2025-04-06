@@ -13,6 +13,7 @@ import {
   CreditCard,
   TrendingDown,
   BarChart3,
+  IndianRupee,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ import { ScrollArea } from "../ui/scroll-area";
 import {
   useFetchAllAppointmentsQuery,
   useFetchAllUsersQuery,
+  useFetchAllPaymentsQuery
 } from "@/app/slices/adminApiSlice";
 import { useGetAllDentistsQuery } from "@/app/slices/dentistApiSlice";
 
@@ -37,11 +39,16 @@ function AdminDashboard() {
   const { data: userData, isLoading } = useFetchAllUsersQuery();
   const { data: appointmentData } = useFetchAllAppointmentsQuery();
   const { data: dentistData } = useGetAllDentistsQuery();
+  const {data: paymentData}= useFetchAllPaymentsQuery();
   const users = Array.isArray(userData?.users) ? userData.users : [];
   const recentUsers = [...users].reverse().slice(0, 4);
   const appointments = Array.isArray(appointmentData?.appointments) ? appointmentData.appointments : [];
   const recentAppointments = [...appointments].reverse().slice(0, 4);
+  
+  const payments = Array.isArray(paymentData?.payments) ? paymentData.payments : [];
+  const recentPayments = [...payments].reverse().slice(0, 4);
   // Mock data - replace with actual API calls
+
   const stats = {
     totalUsers: users?.length,
     activeUsers: users?.length,
@@ -54,7 +61,7 @@ function AdminDashboard() {
   };
 
   const financialStats = {
-    totalRevenue: 125000,
+    totalRevenue: recentPayments.reduce((sum, payment) => sum + payment.amount, 0),
     monthlyRevenue: 15000,
     weeklyRevenue: 3500,
     todayRevenue: 750,
@@ -64,96 +71,20 @@ function AdminDashboard() {
     totalRefunds: 500,
   };
 
-  const recentPayments = [
-    {
-      id: 1,
-      patientName: "John Smith",
-      amount: 250,
-      service: "Root Canal",
-      date: "2024-03-21",
-      status: "completed",
-      paymentMethod: "Credit Card",
-    },
-    {
-      id: 2,
-      patientName: "Emma Wilson",
-      amount: 150,
-      service: "Teeth Cleaning",
-      date: "2024-03-21",
-      status: "pending",
-      paymentMethod: "PayPal",
-    },
-    {
-      id: 3,
-      patientName: "James Brown",
-      amount: 350,
-      service: "Dental Crown",
-      date: "2024-03-21",
-      status: "completed",
-      paymentMethod: "Debit Card",
-    },
-  ];
-
-  const recentAppointments1 = [
-    {
-      id: 1,
-      patientName: "John Smith",
-      dentistName: "Dr. Sarah Johnson",
-      date: "2024-03-21",
-      time: "10:00 AM",
-      status: "completed",
-      type: "Regular Checkup",
-    },
-    {
-      id: 2,
-      patientName: "Emma Wilson",
-      dentistName: "Dr. Michael Chen",
-      date: "2024-03-21",
-      time: "11:30 AM",
-      status: "upcoming",
-      type: "Teeth Cleaning",
-    },
-    {
-      id: 3,
-      patientName: "James Brown",
-      dentistName: "Dr. Sarah Johnson",
-      date: "2024-03-21",
-      time: "2:00 PM",
-      status: "cancelled",
-      type: "Root Canal",
-    },
-  ];
-
-  const recentUsers1 = [
-    {
-      id: 1,
-      name: "Alice Cooper",
-      email: "alice@example.com",
-      joinedDate: "2024-03-21",
-      role: "patient",
-      avatar:
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop",
-    },
-    {
-      id: 2,
-      name: "Dr. Robert Wilson",
-      email: "robert@example.com",
-      joinedDate: "2024-03-20",
-      role: "dentist",
-      avatar: null,
-    },
-  ];
+  
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "completed":
+      case "Completed":
         return "bg-green-100 text-green-800";
-      case "upcoming":
+      case "Confirmed":
         return "bg-blue-100 text-blue-800";
       case "cancelled":
         return "bg-red-100 text-red-800";
       case "pending":
         return "bg-yellow-100 text-yellow-800";
+      case 'Paid':
+        return "bg-green-100 text-green-800"
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -184,72 +115,13 @@ function AdminDashboard() {
               </Select>
             </div>
 
-            {/* Financial Overview */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {/* <Card className="p-6">
-                <div className="flex items-center gap-4">
-                  <div className="rounded-full bg-blue-100 p-3 dark:bg-blue-900">
-                    <CreditCard className="h-6 w-6 text-blue-700 dark:text-blue-300" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      Monthly Revenue
-                    </p>
-                    <div className="flex items-baseline gap-2">
-                      <p className="text-2xl font-bold">
-                        ${financialStats.monthlyRevenue.toLocaleString()}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        This Month
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="p-6">
-                <div className="flex items-center gap-4">
-                  <div className="rounded-full bg-yellow-100 p-3 dark:bg-yellow-900">
-                    <TrendingDown className="h-6 w-6 text-yellow-700 dark:text-yellow-300" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      Pending Payments
-                    </p>
-                    <div className="flex items-baseline gap-2">
-                      <p className="text-2xl font-bold">
-                        ${financialStats.pendingPayments.toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="p-6">
-                <div className="flex items-center gap-4">
-                  <div className="rounded-full bg-purple-100 p-3 dark:bg-purple-900">
-                    <BarChart3 className="h-6 w-6 text-purple-700 dark:text-purple-300" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      Avg. Appointment Value
-                    </p>
-                    <div className="flex items-baseline gap-2">
-                      <p className="text-2xl font-bold">
-                        ${financialStats.averageAppointmentValue}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </Card> */}
-            </div>
-
+            
             {/* Stats Overview */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               <Card className="p-6">
                 <div className="flex items-center gap-4">
                   <div className="rounded-full bg-green-100 p-3 dark:bg-green-900">
-                    <DollarSign className="h-6 w-6 text-green-700 dark:text-green-300" />
+                    <IndianRupee className="h-6 w-6 text-green-700 dark:text-green-300" />
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">
@@ -257,7 +129,7 @@ function AdminDashboard() {
                     </p>
                     <div className="flex items-baseline gap-2">
                       <p className="text-2xl font-bold">
-                        ${financialStats.totalRevenue.toLocaleString()}
+                        Rs.{financialStats.totalRevenue.toLocaleString()}
                       </p>
                       <p className="text-sm text-green-600">
                         +{financialStats.revenueGrowth}%
@@ -349,32 +221,28 @@ function AdminDashboard() {
               <Card className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-semibold">Recent Payments</h2>
-                  <Button variant="ghost" className="text-sm">
-                    View All
-                    <ChevronRight className="ml-2 h-4 w-4" />
-                  </Button>
                 </div>
                 <div className="space-y-4">
                   {recentPayments.map((payment) => (
                     <div
-                      key={payment.id}
+                      key={payment._id}
                       className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0"
                     >
                       <div className="space-y-1">
-                        <p className="font-medium">{payment.patientName}</p>
+                        <p className="font-medium">{payment.paidBy.name}</p>
                         <p className="text-sm text-muted-foreground">
-                          {payment.service}
+                          Appointment Id: <strong className="text-green-800">{payment.appointment}</strong>
                         </p>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <Calendar className="h-4 w-4" />
-                          {new Date(payment.date).toLocaleDateString()}
+                          {new Date(payment.createdAt).toLocaleDateString()}
                           <CreditCard className="h-4 w-4 ml-2" />
                           {payment.paymentMethod}
                         </div>
                       </div>
                       <div className="text-right">
                         <p className="font-semibold text-lg">
-                          ${payment.amount}
+                          Rs.{payment.amount}
                         </p>
                         <span
                           className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${getStatusColor(
@@ -446,13 +314,13 @@ function AdminDashboard() {
               <div className="space-y-4">
                 {recentUsers.map((user) => (
                   <div
-                    key={user.id}
+                    key={user._id}
                     className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0"
                   >
                     <div className="flex items-center gap-3">
                       {user.avatar ? (
                         <img
-                          src={user.avatar}
+                          src={user.avatar.url}
                           alt={user.name}
                           className="h-10 w-10 rounded-full object-cover"
                         />

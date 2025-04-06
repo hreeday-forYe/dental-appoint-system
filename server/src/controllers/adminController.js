@@ -9,6 +9,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import crypto from "crypto";
 import sendMail from "../utils/sendMail.js";
+import Payment from "../models/paymentModel.js";
 class AdminController {
   static registerDentistByAdmin = asyncHandler(async (req, res, next) => {
     const session = await mongoose.startSession();
@@ -357,5 +358,27 @@ class AdminController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
+
+  static fetchAllPaymentsByAdmin = asyncHandler(async(req,res,next) =>{
+    try {
+      const payments = await Payment.find().populate({
+        path: 'paidBy',
+        select: 'name email avatar', // Include only name and email from User
+      });
+      if (!payments) {
+        return res
+          .status(200)
+          .json({ success: true, message: "No payment Found" });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Payements Fetched successfully",
+        payments,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
 }
 export default AdminController;

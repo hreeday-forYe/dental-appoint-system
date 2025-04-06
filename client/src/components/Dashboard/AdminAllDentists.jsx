@@ -20,6 +20,7 @@ import {
   DollarSign,
   CheckCircle,
   XCircle,
+  IndianRupee,
 } from "lucide-react";
 import {
   Dialog,
@@ -111,7 +112,7 @@ function AdminAllDentists() {
               <p className="text-sm">Experience: {dentist.experience} years</p>
               <p className="text-sm">NMC Number: {dentist.nmcNumber}</p>
               <p className="text-sm">
-                Consulting Fee: ${dentist.consultingFee}
+                Consulting Fee: Rs.{dentist.consultingFee}
               </p>
             </div>
             <Button
@@ -265,14 +266,14 @@ function AdminAllDentists() {
                             {selectedDentist.specialization}
                           </p>
                         </div>
-                        <Button
+                        {/* <Button
                           onClick={() => handleEditDentist(selectedDentist._id)}
                           variant="outline"
                           className="border-teal-500 text-teal-500 hover:bg-teal-50"
                         >
                           <Edit className="h-4 w-4 mr-2" />
                           Edit Details
-                        </Button>
+                        </Button> */}
                       </div>
                       <div className="mt-3 flex items-center gap-3">
                         <span
@@ -325,9 +326,9 @@ function AdminAllDentists() {
                           </span>
                         </div>
                         <div className="flex items-center">
-                          <DollarSign className="h-4 w-4 mr-2 text-teal-500" />
+                          <IndianRupee className="h-4 w-4 mr-2 text-teal-500" />
                           <span>
-                            Consulting Fee: ${selectedDentist.consultingFee}
+                            Consulting Fee: Rs.{selectedDentist.consultingFee}
                           </span>
                         </div>
                         <div className="flex items-center">

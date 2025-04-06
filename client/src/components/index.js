@@ -17,12 +17,14 @@ import DentistCard from "./Dentist/DentistCard";
 import FAQ from "./FAQ";
 import BookingForm from "./Dentist/BookingForm";
 import DentistAppointments from './Dentist/DentistAppointments'
+import PaymentForm from "./PaymentForm";
 
 // Admin components
 import AdminDashboard from "./Dashboard/AdminDashboard";
 import AdminAllUsers from "./Dashboard/AdminAllUsers";
 import AdminAllDentists from "./Dashboard/AdminAllDentists";
 import AdminAddDentist from "./Dashboard/AdminAddDentist";
+import AdminAllPayments from './Dashboard/AdminAllPayments.jsx';
 export {
   Login,
   Register,
@@ -39,6 +41,7 @@ export {
   LogoutButton,
   CallToAction,
   CallToActionDentist,
+  PaymentForm,
   DentistRegistrationForm,
   DentistCard,
   BookingForm,
@@ -47,4 +50,6 @@ export {
   AdminAllUsers,
   AdminAllDentists,
   AdminAddDentist,
+  AdminAllPayments,
+  
 };

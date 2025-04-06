@@ -1,3 +1,4 @@
+import React from "react";
 import { format } from "date-fns";
 import { useGetUserAppointmentsQuery } from "@/app/slices/appointmentApiSlice";
 import { Card, CardContent } from "@/components/ui/card";
@@ -5,15 +6,24 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   CalendarDays,
+  CheckCircle2,
   Clock,
   CreditCard,
   Stethoscope,
   User2,
+  ShieldCheck,
+  Clock3,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import CancelAppointment from "@/components/CancelAppointment";
+import {
+  useInitiatePaymentMutation,
+  useCompletePaymentQuery,
+} from "@/app/slices/appointmentApiSlice";
+import { toast } from "react-toastify";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 const AppointmentCard = ({ appointment, refetch }) => {
   const statusColors = {
@@ -32,11 +42,83 @@ const AppointmentCard = ({ appointment, refetch }) => {
     Completed: "bg-emerald-100 text-emerald-800",
     Failed: "bg-red-100 text-red-800",
   };
+  const [payment, { isLoading }] = useInitiatePaymentMutation();
+  const [paymentResult, setPaymentResult] = useState(null);
+  const [pidx, setPidx] = useState(null);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const hasHandledPayment = useRef(false);
 
   const handleCancelSuccess = () => {
-    // Refetch appointments or update local state
     refetch();
   };
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const pidxFromUrl = urlParams.get("pidx");
+    if (pidxFromUrl) {
+      setPidx(pidxFromUrl);
+    }
+  }, []);
+
+  const {
+    data: paymentData,
+    isLoading: verifyLoading,
+    error: verifyError,
+  } = useCompletePaymentQuery(pidx, {
+    skip: !pidx,
+  });
+
+  const onSubmit = async (data) => {
+    try {
+      const res = await payment(data).unwrap();
+      if (res.success) {
+        window.location.href = res?.payment_url;
+      }
+    } catch (error) {
+      toast.error(error?.data?.message || "Payment Initiation Failed");
+    }
+  };
+
+  useEffect(() => {
+    const handlePayment = async () => {
+      if (!hasHandledPayment.current && paymentData) {
+        hasHandledPayment.current = true;
+
+        setPaymentResult(paymentData);
+
+        if (paymentData.success) {
+          // TODO: HIT another API TO make the data base call possible
+          const response = await manageApplicationStatus({purchaseOrderId: appointment._id, })
+          setShowSuccessPopup(true);
+        } else {
+          toast.error(paymentData.message || "Payment Verification Failed");
+        }
+      }
+
+      if (!hasHandledPayment.current && verifyError) {
+        hasHandledPayment.current = true;
+
+        setPaymentResult({
+          success: false,
+          message: verifyError?.data?.message || "Verification failed",
+        });
+        toast.error(verifyError?.data?.message || "Verification failed");
+      }
+    };
+    handlePayment()
+  }, [paymentData, verifyError]);
+
+  const togglePopup = useCallback(() => {
+    setShowSuccessPopup((prev) => !prev);
+  }, []);
+
+  const resetForm = useCallback(() => {
+    setShowSuccessPopup(false);
+    hasHandledPayment.current = false;
+    refetch();
+    window.history.pushState({}, document.title, "/my-appointments");
+  }, [refetch]);
+
   return (
     <Card className="mb-4 hover:shadow-lg transition-shadow duration-200">
       <CardContent className="p-6">
@@ -71,9 +153,6 @@ const AppointmentCard = ({ appointment, refetch }) => {
                 >
                   {appointment.status}
                 </Badge>
-                {/* <Badge className={paymentStatusColors[appointment.paymentStatus]}>
-                  {appointment.paymentStatus}
-                </Badge> */}
               </div>
             </div>
 
@@ -108,21 +187,53 @@ const AppointmentCard = ({ appointment, refetch }) => {
             </div>
             <div className="flex gap-6">
               {appointment.paymentStatus === "Pending" &&
-                appointment.status !== "Completed" &&
-                appointment.status !== "Cancelled" && (
+                appointment.status === "Confirmed" && (
                   <button
-                    // onClick={}
+                    onClick={(e) =>
+                      onSubmit({
+                        amount: appointment.fees,
+                        purchaseOrderId: appointment._id,
+                        purchaseOrderName: appointment.dentist.user.name,
+                      })
+                    }
                     className="mt-4 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-lg transition"
                   >
                     Pay Now
                   </button>
                 )}
+
+              {appointment.paymentStatus === "Pending" &&
+                appointment.status === "Pending" && (
+                  <div className="mt-4 flex items-center gap-2 bg-yellow-50 text-yellow-700 px-4 py-2 rounded-lg">
+                    <Clock3 className="h-5 w-5 animate-pulse" />
+                    <div>
+                      <p className="font-medium">Awaiting Confirmation</p>
+                      <p className="text-sm text-yellow-600">
+                        Your appointment request is being reviewed
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+              {appointment.paymentStatus === "Paid" && (
+                <div className="mt-4 flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-lg">
+                  <ShieldCheck className="h-5 w-5" />
+                  <div>
+                    <p className="font-medium">Payment Confirmed</p>
+                    <p className="text-sm text-emerald-600">
+                      Your appointment is secured and ready
+                    </p>
+                  </div>
+                </div>
+              )}
+
               {appointment.status !== "Cancelled" &&
-                appointment.status !== "Completed" && (
+                appointment.status !== "Completed" &&
+                appointment.paymentStatus !== "Paid" && (
                   <CancelAppointment
                     appointmentId={appointment._id}
                     onCancelSuccess={handleCancelSuccess}
-                    className="mt-4 bg-red-100 text-red-800 hover:bg-red-300 font-semibold rounded-lg transition"
+                    className="mt-5 bg-red-100 text-red-800 hover:bg-red-300 font-semibold rounded-lg transition"
                     trigger={
                       <Button
                         variant="ghost"
@@ -137,6 +248,53 @@ const AppointmentCard = ({ appointment, refetch }) => {
           </div>
         </div>
       </CardContent>
+      {showSuccessPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-fade-in">
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+                <CheckCircle2 className="h-6 w-6 text-green-600" />
+              </div>
+              <h3 className="mt-3 text-lg font-medium text-gray-900">
+                Payment Successful!
+              </h3>
+              <div className="mt-2 text-sm text-gray-500">
+                <p>Your payment has been processed successfully.</p>
+
+                {paymentResult?.paymentInfo && (
+                  <div className="mt-4 bg-gray-50 p-3 rounded-lg text-left">
+                    <h4 className="font-medium text-gray-700 mb-2">
+                      Transaction Details:
+                    </h4>
+                    <div className="space-y-1">
+                      <p className="flex justify-between">
+                        <span className="font-medium">Amount:</span>
+                        <span>
+                          NPR {paymentResult.paymentInfo.total_amount}
+                        </span>
+                      </p>
+                      <p className="flex justify-between">
+                        <span className="font-medium">Transaction ID:</span>
+                        <span className="font-mono">
+                          {paymentResult.paymentInfo.transaction_id}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="mt-5">
+              <button
+                onClick={resetForm}
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Card>
   );
 };
@@ -176,50 +334,46 @@ const MyAppointmentsPage = () => {
           </TabsList>
 
           <TabsContent value="upcoming">
-            <ScrollArea className="h-[calc(100vh-250px)] pr-4">
-              {upcoming.length > 0 ? (
-                upcoming.map((appointment) => (
-                  <AppointmentCard
-                    key={appointment._id}
-                    appointment={appointment}
-                    refetch={refetch}
-                  />
-                ))
-              ) : (
-                <div className="text-center py-12">
-                  <CalendarDays className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900">
-                    No upcoming appointments
-                  </h3>
-                  <p className="text-gray-500 mt-1">
-                    Schedule your next visit with one of our dentists.
-                  </p>
-                </div>
-              )}
-            </ScrollArea>
+            {upcoming.length > 0 ? (
+              upcoming.map((appointment) => (
+                <AppointmentCard
+                  key={appointment._id}
+                  appointment={appointment}
+                  refetch={refetch}
+                />
+              ))
+            ) : (
+              <div className="text-center py-12">
+                <CalendarDays className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900">
+                  No upcoming appointments
+                </h3>
+                <p className="text-gray-500 mt-1">
+                  Schedule your next visit with one of our dentists.
+                </p>
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="past">
-            <ScrollArea className="h-[calc(100vh-250px)] pr-4">
-              {past.length > 0 ? (
-                past.map((appointment) => (
-                  <AppointmentCard
-                    key={appointment._id}
-                    appointment={appointment}
-                  />
-                ))
-              ) : (
-                <div className="text-center py-12">
-                  <CalendarDays className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900">
-                    No past appointments
-                  </h3>
-                  <p className="text-gray-500 mt-1">
-                    Your appointment history will appear here.
-                  </p>
-                </div>
-              )}
-            </ScrollArea>
+            {past.length > 0 ? (
+              past.map((appointment) => (
+                <AppointmentCard
+                  key={appointment._id}
+                  appointment={appointment}
+                />
+              ))
+            ) : (
+              <div className="text-center py-12">
+                <CalendarDays className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900">
+                  No past appointments
+                </h3>
+                <p className="text-gray-500 mt-1">
+                  Your appointment history will appear here.
+                </p>
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </div>

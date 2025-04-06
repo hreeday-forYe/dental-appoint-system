@@ -78,10 +78,10 @@ function ProfilePage() {
       reset({
         name: data.user.name || "",
         email: data.user.email || "",
-        phone: data.user.phone || "",
-        dob: data.user.dob ? formatDate(data.user.dob) : "",
-        address: data.user.address || "",
-        medicalHistory: data.user.medicalHistory || "",
+        phone: data.user.phone || "Contact info not provided",
+        dob: data.user.dob ? formatDate(data.user.dob) : "Date of birth not provided",
+        address: data.user.address || "Address not provided",
+        medicalHistory: data.user.medicalHistory || "No Medical history provided",
       });
       setSelectedImage(data?.user.avatar?.url || "");
     }
@@ -302,60 +302,6 @@ function ProfilePage() {
                 {...register("medicalHistory")}
                 className="h-32"
               />
-            </div>
-
-            <div>
-              <Label>Preferred Dentists</Label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
-                {mockDentists.map((dentist) => (
-                  <div
-                    key={dentist.id}
-                    className={`p-3 rounded-lg border transition-colors ${
-                      preferredDentists.includes(dentist.id)
-                        ? "border-primary bg-primary/5"
-                        : "border-gray-200"
-                    }`}
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <div className="font-medium">{dentist.name}</div>
-                        <Badge variant="secondary" className="mt-1">
-                          {dentist.specialization}
-                        </Badge>
-                      </div>
-                      {isEditing && (
-                        <div className="flex gap-2">
-                          {preferredDentists.includes(dentist.id) ? (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                removeDentist(dentist.id);
-                              }}
-                            >
-                              Remove
-                            </Button>
-                          ) : (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 px-2"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleDentist(dentist.id);
-                              }}
-                            >
-                              Add
-                            </Button>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
 
             <Separator />

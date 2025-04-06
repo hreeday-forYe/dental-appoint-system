@@ -32,10 +32,8 @@ const HeaderDropdown = () => {
             Profile
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem>Billing</DropdownMenuItem>
-        <DropdownMenuItem>Team</DropdownMenuItem>
         <DropdownMenuItem className="group">
-          <LogoutButton className="bg-red-400">Logout</LogoutButton>
+          <LogoutButton className="bg-red-500 ">Logout</LogoutButton>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

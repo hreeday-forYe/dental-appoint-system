@@ -48,6 +48,22 @@ export const appointmentApiSlice = apiSlice.injectEndpoints({
         body: reason,
       }),
     }),
+    completePayment: builder.query({
+      query: (pidx) => ({
+        url: `${appointment_url}/complete-payment?pidx=${pidx}`,
+        method: "GET",
+        credentials: "include",
+      }),
+    }),
+    //kahlti initiatePayment slices
+    initiatePayment: builder.mutation({
+      query: (data) => ({
+        url: `${appointment_url}/initiate-payment`,
+        method: "POST",
+        body: data,
+        credentials: "include",
+        }),
+      }),
   }),
 });
 
@@ -57,5 +73,7 @@ export const {
   useGetUserAppointmentsQuery,
   useGetDentistAppointmentsQuery,
   useChangeAppointmentStatusMutation,
-  useCancelAppointmentMutation
+  useCancelAppointmentMutation,
+  useInitiatePaymentMutation,
+  useCompletePaymentQuery
 } = appointmentApiSlice;

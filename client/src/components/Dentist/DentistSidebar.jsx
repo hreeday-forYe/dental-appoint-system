@@ -9,30 +9,32 @@ import {
   Stethoscope,
   Bell,
   Users,
-  Wallet2Icon
+  Wallet2Icon,
+  User,
+  Home,
+  Calendar,
+  ClipboardList,
+  DollarSign,
 } from "lucide-react";
-import logo from '../../assets/logo.png'
+import logo from "../../assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
 import LogoutButton from "@/components/Header/LogoutButton";
+import { useSelector } from "react-redux";
 
-const Sidebar = () => {
+const DentistSidebar = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const location = useLocation();
 
   const navigationItems = [
-    {
-      icon: LayoutDashboard,
-      label: "Dashboard",
-      href: "/admin",
-    },
-    { icon: Users, label: "Users", href: "/admin/all-users" },
-    { icon: CalendarClock, label: "Appointments", href: "/admin/all-appointments" },
-    { icon: Stethoscope, label: "Dentists", href: "/admin/all-dentists" },
-    { icon: Wallet2Icon , label: "Payments", href: "/admin/all-payments" },
-    { icon: Settings, label: "Settings", href: "/settings" },
+    { icon: Home, label: "Dashboard", path: "/dentist" },
+    { icon: Users, label: "My Patients", path: "/dentist/patients" },
+    { icon: Calendar, label: "Appointments", path: "/dentist/appointments" },
+    { icon: User, label: "Profile", path: "/dentist/profile" },
   ];
+
+  const userData  = useSelector((state) =>state.auth.user)
 
   return (
     <div
@@ -44,8 +46,21 @@ const Sidebar = () => {
       <div className="flex h-16 items-center justify-between border-b px-4">
         {!isSidebarCollapsed && (
           <>
-            <MountainIcon className="h-16 w-16" />
-          <span className="text-lg font-semibold">Smile Sync</span>
+            <div className="p-1">
+              <div className="flex items-center gap-3">
+                <img
+                  src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=150&h=150&fit=crop"
+                  alt=""
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+                <div>
+                  <h3 className="font-semibold text-sm text-gray-800">
+                    Dr. {userData.name}
+                  </h3>
+                  <p className="text-sm text-gray-500">Dentist</p>
+                </div>
+              </div>
+            </div>
           </>
         )}
         <Button
@@ -59,7 +74,7 @@ const Sidebar = () => {
       <div className="flex-1 overflow-auto py-4">
         <nav className="space-y-2 px-2">
           {navigationItems.map((item) => (
-            <Link to={item.href} key={item.label}>
+            <Link to={item.path} key={item.label}>
               <Button
                 variant={
                   location.pathname === item.href ? "secondary" : "ghost"
@@ -79,15 +94,13 @@ const Sidebar = () => {
         </nav>
       </div>
       <div className="border-t p-4">
-        <LogoutButton className="bg-no w-full justify-start text-red-600 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50" isSidebarCollapsed={isSidebarCollapsed} />
+        <LogoutButton
+          className="bg-no w-full justify-start text-red-600 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50"
+          isSidebarCollapsed={isSidebarCollapsed}
+        />
       </div>
     </div>
   );
 };
 
-export default Sidebar;
-
-
-function MountainIcon(props) {
-  return <img src={logo} alt="Logo" {...props} />;
-}
+export default DentistSidebar;
