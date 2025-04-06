@@ -88,7 +88,7 @@ const AppointmentCard = ({ appointment, refetch }) => {
 
         if (paymentData.success) {
           // TODO: HIT another API TO make the data base call possible
-          const response = await manageApplicationStatus({purchaseOrderId: appointment._id, })
+          // const response = await manageApplicationStatus({purchaseOrderId: appointment._id, })
           setShowSuccessPopup(true);
         } else {
           toast.error(paymentData.message || "Payment Verification Failed");

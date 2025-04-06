@@ -11,6 +11,7 @@ dentistRouter.post(
 );
 dentistRouter.get("/", DentistController.fetchAllDentist);
 dentistRouter.get('/appointments', isAuthenticated, authorizeRoles('dentist'), DentistController.fetchAppointments);
+dentistRouter.get('/patients', isAuthenticated, authorizeRoles('dentist'), DentistController.getPatientsData)
 
 dentistRouter.get("/:id", DentistController.fetchSingleDentist);
 

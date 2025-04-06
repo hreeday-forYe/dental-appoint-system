@@ -219,6 +219,55 @@ class DentistController {
       );
     }
   });
+
+  static getPatientsData = asyncHandler(async (req, res, next) => {
+    try {
+      const dentistId = req.user._id; // Assuming dentist is logged in and user object is attached to req
+
+      // Find all appointments for this dentist
+      const appointments = await Appointment.find({ dentist: dentistId })
+        .populate({
+          path: "user",
+          select: "name email phone avatar", // Select only necessary fields
+        })
+        .lean();
+
+      // Get unique patients by filtering duplicates
+      const uniquePatientsMap = new Map();
+
+      appointments.forEach((appointment) => {
+        if (appointment.user) {
+          // Use patient ID as the map key to ensure uniqueness
+          if (!uniquePatientsMap.has(appointment.user._id.toString())) {
+            uniquePatientsMap.set(appointment.user._id.toString(), {
+              _id: appointment.user._id,
+              name: appointment.user.name,
+              email: appointment.user.email,
+              phone: appointment.user.phone || "Not provided",
+              avatar: appointment.user.avatar?.url || null,
+              lastAppointment: appointment.date, // Store the most recent appointment date
+            });
+          }
+        }
+      });
+
+      // Convert map values to array
+      const uniquePatients = Array.from(uniquePatientsMap.values());
+
+      // Sort patients by most recent appointment
+      uniquePatients.sort(
+        (a, b) => new Date(b.lastAppointment) - new Date(a.lastAppointment)
+      );
+
+      res.status(200).json({
+        success: true,
+        count: uniquePatients.length,
+        patients: uniquePatients,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
 }
 
 export default DentistController;
