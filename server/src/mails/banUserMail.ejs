@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account Status Update - Smile Sync</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f8ff;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .notification-container {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        width: 90%;
+        max-width: 500px;
+      }
+      h1 {
+        color: #721c24;
+        background-color: #f8d7da;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        font-size: 26px;
+      }
+      .important-note {
+        font-size: 18px;
+        color: #856404;
+        margin: 20px 0;
+        font-weight: bold;
+      }
+      p {
+        color: #555;
+        line-height: 1.6;
+      }
+      .info {
+        color: #6c757d;
+        margin-bottom: 20px;
+      }
+      .btn {
+        display: inline-block;
+        padding: 12px 25px;
+        background-color: #6c757d;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+        margin-top: 15px;
+      }
+      .btn:hover {
+        background-color: #5a6268;
+      }
+      .footer {
+        margin-top: 20px;
+        font-size: 14px;
+        color: #888;
+      }
+      .warning-icon {
+        font-size: 50px;
+        color: #dc3545;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="notification-container">
+      <div class="warning-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+        </svg>
+      </div>
+
+      <h1>Account Suspension Notice</h1>
+      <p>Hello <%= userName %>,</p>
+      <p>
+        We regret to inform you that your Smile Sync account has been suspended due to violations of our Terms of Service.
+      </p>
+      
+      <div class="important-note">
+        Reason: <%= banReason %>
+      </div>
+      
+      <p class="info">
+        Our system has detected activities that are not permitted under our platform's guidelines. After careful review, our moderation team has determined that this action is necessary to maintain a safe and professional environment for all users.
+      </p>
+      
+      <p>
+        As a result of this suspension:
+      </p>
+      <ul style="text-align: left; color: #555;">
+        <li>You can no longer access your account</li>
+        <li>Any upcoming appointments have been canceled</li>
+        <li>You cannot create new accounts with our service</li>
+      </ul>
+      
+      <p>
+        If you believe this action was taken in error, you may appeal this decision by contacting our support team.
+      </p>
+      
+      <a href="mailto:support@smilesync.com?subject=Account Suspension Appeal" class="btn">Contact Support</a>
+      
+      <div class="footer">
+        <p>Sincerely,</p>
+        <p>The Smile Sync Safety Team</p>
+      </div>
+    </div>
+  </body>
+</html>

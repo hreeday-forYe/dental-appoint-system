@@ -348,7 +348,35 @@ class AdminController {
       } else {
         user.isVerified = true;
       }
-      // TODO: Mail feature for handling the user ban
+
+      if (user.isVerified === false) {
+        const mailData = {
+          userName: user.name,
+          banReason: "Due to  violation of terms and conditions",
+        };
+
+        const __filename = fileURLToPath(import.meta.url);
+        const currentDirectory = path.dirname(__filename);
+        const mailPath = path.join(
+          currentDirectory,
+          "../mails/banUserMail.ejs"
+        );
+
+        const html = await ejs.renderFile(mailPath, mailData);
+
+        // Sending the mail to the Dentist for his account creation Successfull
+        try {
+          await sendMail({
+            email: dentistUser[0].email,
+            subject: "Account Suspension Notice",
+            template: "welcomeDentist.ejs",
+            data: mailData,
+          });
+        } catch (mailError) {
+          console.error("Mail sending failed:", mailError);
+          return next(new ErrorHandler("Failed to send email.", 500));
+        }
+      }
       await user.save();
       return res.status(200).json({
         success: true,
@@ -359,11 +387,11 @@ class AdminController {
     }
   });
 
-  static fetchAllPaymentsByAdmin = asyncHandler(async(req,res,next) =>{
+  static fetchAllPaymentsByAdmin = asyncHandler(async (req, res, next) => {
     try {
       const payments = await Payment.find().populate({
-        path: 'paidBy',
-        select: 'name email avatar', // Include only name and email from User
+        path: "paidBy",
+        select: "name email avatar", // Include only name and email from User
       });
       if (!payments) {
         return res
@@ -379,6 +407,6 @@ class AdminController {
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
-  })
+  });
 }
 export default AdminController;

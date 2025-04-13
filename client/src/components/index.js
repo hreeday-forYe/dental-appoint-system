@@ -17,7 +17,7 @@ import DentistCard from "./Dentist/DentistCard";
 import FAQ from "./FAQ";
 import BookingForm from "./Dentist/BookingForm";
 import DentistAppointments from './Dentist/DentistAppointments'
-import PaymentForm from "./PaymentForm";
+// import PaymentForm from "./PaymentForm";
 
 // Admin components
 import AdminDashboard from "./Dashboard/AdminDashboard";
@@ -41,7 +41,6 @@ export {
   LogoutButton,
   CallToAction,
   CallToActionDentist,
-  PaymentForm,
   DentistRegistrationForm,
   DentistCard,
   BookingForm,

@@ -29,6 +29,13 @@ appointmentRouter.get(
 );
 
 appointmentRouter.put(
+  "/complete-payment",
+  isAuthenticated,
+  authorizeRoles("user"),
+  AppointmentController.completePayment
+);
+
+appointmentRouter.put(
   "/:id",
   isAuthenticated,
   authorizeRoles("dentist"),
@@ -48,9 +55,4 @@ appointmentRouter.post(
   AppointmentController.initiatePayment
 );
 
-appointmentRouter.get(
-  "/complete-payment",
-  isAuthenticated,
-  AppointmentController.completePayment
-);
 export default appointmentRouter;

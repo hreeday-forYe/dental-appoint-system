@@ -222,10 +222,11 @@ class DentistController {
 
   static getPatientsData = asyncHandler(async (req, res, next) => {
     try {
-      const dentistId = req.user._id; // Assuming dentist is logged in and user object is attached to req
+      const userId = req.user._id; // Assuming dentist is logged in and user object is attached to req
+      const dentist = await Dentist.findOne({ user: userId });
 
       // Find all appointments for this dentist
-      const appointments = await Appointment.find({ dentist: dentistId })
+      const appointments = await Appointment.find({ dentist: dentist._id })
         .populate({
           path: "user",
           select: "name email phone avatar", // Select only necessary fields
@@ -263,6 +264,29 @@ class DentistController {
         success: true,
         count: uniquePatients.length,
         patients: uniquePatients,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
+
+  static getDentistProfile = asyncHandler(async (req, res, next) => {
+    try {
+      const user = await User.findById(req.user._id);
+      if (!user) {
+        return next(new ErrorHandler("user not found", 400));
+      }
+      const dentist = await Dentist.findOne({ user: user._id }).populate(
+        "user"
+      );
+      if (!dentist) {
+        return next(new ErrorHandler("Dentist not found", 400));
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Profile fetched Successfully",
+        dentist,
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));

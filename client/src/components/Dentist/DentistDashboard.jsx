@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { useGetDentistAppointmentsQuery } from "@/app/slices/appointmentApiSlice";
 import { useGetPatientsDataQuery } from "@/app/slices/dentistApiSlice";
 import { useSelector } from "react-redux";
+import { useMemo } from "react";
 
 // // Mock data
 // const mockAppointments = [
@@ -103,12 +104,12 @@ function AppointmentList({ appointments, title }) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[400px] pr-4">
+        <ScrollArea className="h-[200px] pr-4">
           <div className="space-y-4">
             {appointments.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-muted-foreground">
-                  No appointments for {title}
+                  No appointments in {title}
                 </p>
               </div>
             ) : (
@@ -154,17 +155,17 @@ function App() {
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
 
   const { data, isLoading } = useGetDentistAppointmentsQuery();
-  const appointments = Array.isArray(data?.appointments)
-    ? data.appointments
-    : [];
-  const mockAppointments = [...appointments].reverse();
-  
-  const {data:patientsData, isLoading:patientsLoading } = useGetPatientsDataQuery()
-  console.log(patientsData);
-  const userData = useSelector((state) =>state.auth.user)
+  const { data: patientsData, isLoading: patientsLoading } = useGetPatientsDataQuery();
+  const userData = useSelector((state) => state.auth.user);
+
+  // Memoize the appointments array to prevent unnecessary recalculations
+  const mockAppointments = useMemo(() => {
+    return Array.isArray(data?.appointments) ? [...data.appointments].reverse() : [];
+  }, [data?.appointments]);
 
   useEffect(() => {
-    // Simulating API call
+    if (!mockAppointments.length) return;
+
     const today = new Date().toISOString().split("T")[0];
 
     const todaysAppts = mockAppointments.filter(
@@ -177,7 +178,9 @@ function App() {
 
     setTodayAppointments(todaysAppts);
     setUpcomingAppointments(upcomingAppts);
-  }, []);
+  }, [mockAppointments]); // Now depends on the memoized value
+
+  // console.log(upcomingAppointments);
 
   return (
     <ScrollArea className="flex-1 h-[100vh]">
@@ -194,7 +197,7 @@ function App() {
             </div>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             <StatsCard
               title="Total Appointments"
               value={mockAppointments.length}
@@ -205,7 +208,7 @@ function App() {
             />
             <StatsCard
               title="Today's Appointments"
-              value={todayAppointments.length}
+              value={todayAppointments?.length}
               icon={<Clock className="h-5 w-5 text-green-600" />}
               description="Appointments for today"
               className="bg-green-50 dark:bg-green-950/50"
@@ -213,20 +216,20 @@ function App() {
             />
             <StatsCard
               title="Active Patients"
-              value="124"
+              value={patientsData?.count}
               icon={<Users className="h-5 w-5 text-purple-600" />}
               description="Registered patients"
               className="bg-purple-50 dark:bg-purple-950/50"
               iconClassName="bg-purple-100 dark:bg-purple-900"
             />
-            <StatsCard
+            {/* <StatsCard
               title="Treatment Success Rate"
               value="98%"
               icon={<Activity className="h-5 w-5 text-orange-600" />}
               description="Based on patient feedback"
               className="bg-orange-50 dark:bg-orange-950/50"
               iconClassName="bg-orange-100 dark:bg-orange-900"
-            />
+            /> */}
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">

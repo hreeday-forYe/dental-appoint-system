@@ -41,17 +41,18 @@ export const appointmentApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     cancelAppointment: builder.mutation({
-      query: ({appointmentId, reason}) => ({
+      query: ({ appointmentId, reason }) => ({
         url: `${appointment_url}/cancel/${appointmentId}`,
         method: "PUT",
         credentials: "include",
         body: reason,
       }),
     }),
-    completePayment: builder.query({
-      query: (pidx) => ({
+    completePayment: builder.mutation({
+      query: ({ pidx, purchaseOrderId }) => ({
         url: `${appointment_url}/complete-payment?pidx=${pidx}`,
-        method: "GET",
+        method: "PUT",
+        body: { purchaseOrderId },
         credentials: "include",
       }),
     }),
@@ -62,8 +63,8 @@ export const appointmentApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
         credentials: "include",
-        }),
       }),
+    }),
   }),
 });
 
@@ -75,5 +76,5 @@ export const {
   useChangeAppointmentStatusMutation,
   useCancelAppointmentMutation,
   useInitiatePaymentMutation,
-  useCompletePaymentQuery
+  useCompletePaymentMutation,
 } = appointmentApiSlice;

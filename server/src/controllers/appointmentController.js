@@ -281,65 +281,6 @@ class AppointmentController {
         }
       );
 
-      if (response.data.pidx) {
-        const appointment = await Appointment.findById(purchaseOrderId)
-          .populate("user", "name email")
-          .populate({
-            path: "dentist",
-            populate: {
-              path: "user",
-              select: "name",
-            },
-          });
-
-        appointment.paymentStatus = "Paid";
-        appointment.paymentMethod = "Khalti";
-        await appointment.save();
-
-        await Payment.create({
-          paidBy: user._id,
-          appointment: purchaseOrderId,
-          status: "Paid",
-          amount: amount,
-          paymentMethod: "Khalti",
-          pidx: response.data.pidx,
-        });
-
-        // Prepare mail data
-        const mailData = {
-          userName: user.name,
-          amount: amount,
-          appointmentId: appointment._id,
-          dentistName: appointment.dentist.user.name,
-          appointmentDate: format(new Date(appointment.date), "do MMMM yyyy"),
-          appointmentTime: appointment.timeSlot,
-          paymentMethod: "Khalti",
-          userEmail: user.email,
-        };
-
-        // Send email
-        try {
-          const __filename = fileURLToPath(import.meta.url);
-          const currentDirectory = path.dirname(__filename);
-          const mailPath = path.join(
-            currentDirectory,
-            "../mails/paymentSuccessfull.ejs"
-          );
-
-          const html = await ejs.renderFile(mailPath, mailData);
-
-          await sendMail({
-            email: user.email,
-            subject: "Payment Successful",
-            template: "paymentSuccessfull.ejs",
-            data: mailData,
-          });
-        } catch (mailError) {
-          console.error("Mail sending failed:", mailError);
-          // Don't fail the whole request if email fails
-        }
-      }
-
       res.json({
         success: true,
         payment_url: response.data.payment_url,
@@ -356,6 +297,8 @@ class AppointmentController {
   //verify payment
   static completePayment = asyncHandler(async (req, res, next) => {
     const { pidx } = req.query;
+    const user = await User.findById(req.user._id);
+    const { purchaseOrderId } = req.body;
     if (!pidx) {
       return res
         .status(400)
@@ -375,6 +318,63 @@ class AppointmentController {
     paymentInfo.total_amount = paymentInfo.total_amount / 100;
 
     if (paymentInfo.status === "Completed") {
+      const appointment = await Appointment.findById(purchaseOrderId)
+        .populate("user", "name email")
+        .populate({
+          path: "dentist",
+          populate: {
+            path: "user",
+            select: "name",
+          },
+        });
+
+      appointment.paymentStatus = "Paid";
+      appointment.paymentMethod = "Khalti";
+      await appointment.save();
+
+      await Payment.create({
+        paidBy: user._id,
+        appointment: purchaseOrderId,
+        status: "Paid",
+        amount: paymentInfo.total_amount,
+        paymentMethod: "Khalti",
+        pidx: paymentInfo.pidx,
+      });
+
+      // Prepare mail data
+      const mailData = {
+        userName: user.name,
+        amount: paymentInfo.total_amount,
+        appointmentId: appointment._id,
+        dentistName: appointment.dentist.user.name,
+        appointmentDate: format(new Date(appointment.date), "do MMMM yyyy"),
+        appointmentTime: appointment.timeSlot,
+        paymentMethod: "Khalti",
+        userEmail: user.email,
+      };
+
+      // Send email
+      try {
+        const __filename = fileURLToPath(import.meta.url);
+        const currentDirectory = path.dirname(__filename);
+        const mailPath = path.join(
+          currentDirectory,
+          "../mails/paymentSuccessfull.ejs"
+        );
+
+        const html = await ejs.renderFile(mailPath, mailData);
+
+        await sendMail({
+          email: user.email,
+          subject: "Payment Successful",
+          template: "paymentSuccessfull.ejs",
+          data: mailData,
+        });
+      } catch (mailError) {
+        console.error("Mail sending failed:", mailError);
+        // Don't fail the whole request if email fails
+      }
+
       res.json({
         success: true,
         message: "Payment verified ",

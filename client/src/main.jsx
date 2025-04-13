@@ -15,7 +15,7 @@ import {
   AdminAllUsers,
   AdminAllDentists,
   AdminAddDentist,
-  AdminAllPayments
+  AdminAllPayments,
 } from "./components";
 import {
   HomePage,
@@ -29,6 +29,7 @@ import {
   DentistDashboardPage,
   AdminDashboardPage,
   SingleDentistPage,
+  DentistProfilePage,
 } from "./pages";
 import AuthLayout from "./routes/AuthLayout";
 import AdminLayout from "./routes/AdminLayout";
@@ -212,6 +213,14 @@ const router = createBrowserRouter([
         element: (
           <DentistLayout>
             <DentistPatients />
+          </DentistLayout>
+        ),
+      }, // Default Dentist Dashboard page
+      {
+        path: "profile",
+        element: (
+          <DentistLayout>
+            <DentistProfilePage />
           </DentistLayout>
         ),
       }, // Default Dentist Dashboard page

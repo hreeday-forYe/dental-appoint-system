@@ -211,7 +211,7 @@ function AdminAllUsers() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredUsers.map((user) => (
+                    {filteredUsers?.map((user) => (
                       <tr key={user._id} className="border-b last:border-0">
                         <td className="py-4">
                           <div className="flex items-center gap-3">

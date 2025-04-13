@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import CancelAppointment from "@/components/CancelAppointment";
 import {
   useInitiatePaymentMutation,
-  useCompletePaymentQuery,
+  useCompletePaymentMutation,
 } from "@/app/slices/appointmentApiSlice";
 import { toast } from "react-toastify";
 import { useEffect, useRef, useState, useCallback } from "react";
@@ -47,9 +47,25 @@ const AppointmentCard = ({ appointment, refetch }) => {
   const [pidx, setPidx] = useState(null);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const hasHandledPayment = useRef(false);
+  const [completePayment] = useCompletePaymentMutation();
 
   const handleCancelSuccess = () => {
     refetch();
+  };
+
+  const completePaymentHandler = async (pidx) => {
+    try {
+      const purchaseOrderId = localStorage.getItem('appointmentId')
+      // console.log(purchaseOrderId);
+      const paymentData = await completePayment({ pidx, purchaseOrderId }).unwrap();
+      if (paymentData.success) {
+        setPaymentResult(paymentData);
+        setShowSuccessPopup(true);
+      }
+      return;
+    } catch (error) {
+      toast.error(error?.data?.message || "Payment verification failed");
+    }
   };
 
   useEffect(() => {
@@ -58,18 +74,29 @@ const AppointmentCard = ({ appointment, refetch }) => {
     if (pidxFromUrl) {
       setPidx(pidxFromUrl);
     }
+    if (pidxFromUrl) {
+      // await completePayment()
+      completePaymentHandler(pidxFromUrl);
+    }
+    // if (localStorage.getItem("appointmentId")) {
+    //   return;
+    // } else {
+    //   localStorage.setItem("appointmentId", appointment._id);
+    // }
   }, []);
 
-  const {
-    data: paymentData,
-    isLoading: verifyLoading,
-    error: verifyError,
-  } = useCompletePaymentQuery(pidx, {
-    skip: !pidx,
-  });
+  // const {
+  //   data: paymentData,
+  //   isLoading: verifyLoading,
+  //   error: verifyError,
+  // } = useCompletePaymentQuery(pidx, {
+  //   skip: !pidx,
+  // });
 
   const onSubmit = async (data) => {
     try {
+      console.log(data);
+      localStorage.setItem('appointmentId',data.purchaseOrderId)
       const res = await payment(data).unwrap();
       if (res.success) {
         window.location.href = res?.payment_url;
@@ -79,34 +106,34 @@ const AppointmentCard = ({ appointment, refetch }) => {
     }
   };
 
-  useEffect(() => {
-    const handlePayment = async () => {
-      if (!hasHandledPayment.current && paymentData) {
-        hasHandledPayment.current = true;
+  // useEffect(() => {
+  //   const handlePayment = async () => {
+  //     if (!hasHandledPayment.current && paymentData) {
+  //       hasHandledPayment.current = true;
 
-        setPaymentResult(paymentData);
+  //       setPaymentResult(paymentData);
 
-        if (paymentData.success) {
-          // TODO: HIT another API TO make the data base call possible
-          // const response = await manageApplicationStatus({purchaseOrderId: appointment._id, })
-          setShowSuccessPopup(true);
-        } else {
-          toast.error(paymentData.message || "Payment Verification Failed");
-        }
-      }
+  //       if (paymentData.success) {
+  //         // TODO: HIT another API TO make the data base call possible
+  //         // const response = await manageApplicationStatus({purchaseOrderId: appointment._id, })
+  //         setShowSuccessPopup(true);
+  //       } else {
+  //         toast.error(paymentData.message || "Payment Verification Failed");
+  //       }
+  //     }
 
-      if (!hasHandledPayment.current && verifyError) {
-        hasHandledPayment.current = true;
+  //     if (!hasHandledPayment.current && verifyError) {
+  //       hasHandledPayment.current = true;
 
-        setPaymentResult({
-          success: false,
-          message: verifyError?.data?.message || "Verification failed",
-        });
-        toast.error(verifyError?.data?.message || "Verification failed");
-      }
-    };
-    handlePayment()
-  }, [paymentData, verifyError]);
+  //       setPaymentResult({
+  //         success: false,
+  //         message: verifyError?.data?.message || "Verification failed",
+  //       });
+  //       toast.error(verifyError?.data?.message || "Verification failed");
+  //     }
+  //   };
+  //   handlePayment()
+  // }, [paymentData, verifyError]);
 
   const togglePopup = useCallback(() => {
     setShowSuccessPopup((prev) => !prev);
@@ -114,10 +141,12 @@ const AppointmentCard = ({ appointment, refetch }) => {
 
   const resetForm = useCallback(() => {
     setShowSuccessPopup(false);
-    hasHandledPayment.current = false;
-    refetch();
+    // hasHandledPayment.current = false;
     window.history.pushState({}, document.title, "/my-appointments");
-  }, [refetch]);
+    refetch();
+    localStorage.removeItem("appointmentId");
+    window.location.reload();
+  }, []);
 
   return (
     <Card className="mb-4 hover:shadow-lg transition-shadow duration-200">
