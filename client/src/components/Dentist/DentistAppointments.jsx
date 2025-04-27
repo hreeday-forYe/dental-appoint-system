@@ -32,7 +32,6 @@ function DentistAppointments() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTab, setSelectedTab] = useState("upcoming");
 
-  // TODO: Replace with your actual API hook
   const { data, isLoading, refetch } = useFetchDentistAppointmentsQuery();
   const appointments = Array.isArray(data?.appointments)
     ? data.appointments
@@ -45,7 +44,7 @@ function DentistAppointments() {
     try {
       const response = await changeAppointment(id).unwrap();
       if (response.success) {
-        toast.success("Appointment Confirmed");
+        toast.success(response.message);
         refetch();
       }
     } catch (error) {
@@ -165,6 +164,7 @@ function DentistAppointments() {
                       .map((appointment) => (
                         <AppointmentCard
                           onConfirm={onConfirm}
+                          changeLoading={changeLoading}
                           onReject={onReject}
                           key={appointment._id}
                           appointment={appointment}
@@ -184,6 +184,7 @@ function DentistAppointments() {
                       .map((appointment) => (
                         <AppointmentCard
                           onConfirm={onConfirm}
+                          changeLoading={changeLoading}
                           onReject={onReject}
                           key={appointment._id}
                           appointment={appointment}
@@ -201,6 +202,7 @@ function DentistAppointments() {
                       .map((appointment) => (
                         <AppointmentCard
                           onConfirm={onConfirm}
+                          changeLoading={changeLoading}
                           onReject={onReject}
                           key={appointment._id}
                           appointment={appointment}

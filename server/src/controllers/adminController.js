@@ -349,6 +349,7 @@ class AdminController {
         user.isVerified = true;
       }
 
+      // This is for the people who are getting banned
       if (user.isVerified === false) {
         const mailData = {
           userName: user.name,
@@ -364,12 +365,12 @@ class AdminController {
 
         const html = await ejs.renderFile(mailPath, mailData);
 
-        // Sending the mail to the Dentist for his account creation Successfull
+        // Sending the mail to the User to tell his account was banned
         try {
           await sendMail({
-            email: dentistUser[0].email,
+            email: user.email,
             subject: "Account Suspension Notice",
-            template: "welcomeDentist.ejs",
+            template: "banUserMail.ejs",
             data: mailData,
           });
         } catch (mailError) {
@@ -377,10 +378,40 @@ class AdminController {
           return next(new ErrorHandler("Failed to send email.", 500));
         }
       }
+
+      // This is for the people who are getting unbanned
+      if (user.isVerified) {
+        const mailData = {
+          userName: user.name,
+        };
+
+        const __filename = fileURLToPath(import.meta.url);
+        const currentDirectory = path.dirname(__filename);
+        const mailPath = path.join(
+          currentDirectory,
+          "../mails/unbanUserMail.ejs"
+        );
+
+        const html = await ejs.renderFile(mailPath, mailData);
+
+        // Sending the mail to the User to tell his account was banned
+        try {
+          await sendMail({
+            email: user.email,
+            subject: "Account Suspension Revoked",
+            template: "unbanUserMail.ejs",
+            data: mailData,
+          });
+        } catch (mailError) {
+          console.error("Mail sending failed:", mailError);
+          return next(new ErrorHandler("Failed to send email.", 500));
+        }
+      }
+
       await user.save();
       return res.status(200).json({
         success: true,
-        message: "User banned successfully",
+        message: user.isVerified? "User unbanned successfully" : 'User banned Successfully',
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));

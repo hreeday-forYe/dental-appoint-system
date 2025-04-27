@@ -31,6 +31,7 @@ import {
   useFetchAllPaymentsQuery
 } from "@/app/slices/adminApiSlice";
 import { useGetAllDentistsQuery } from "@/app/slices/dentistApiSlice";
+import { Link } from "react-router-dom";
 
 function AdminDashboard() {
   const [timeRange, setTimeRange] = useState("today");
@@ -261,10 +262,12 @@ function AdminDashboard() {
               <Card className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-semibold">Recent Appointments</h2>
+                  <Link to="/admin/all-appointments">
                   <Button variant="ghost" className="text-sm">
                     View All
                     <ChevronRight className="ml-2 h-4 w-4" />
                   </Button>
+                  </Link>
                 </div>
                 <div className="space-y-4">
                   {recentAppointments.map((appointment) => (

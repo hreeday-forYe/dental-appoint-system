@@ -169,26 +169,40 @@ function AddDentist() {
                       Password
                     </label>
                     <Input
+                      id="password"
+                      type="password"
                       {...register("password", {
                         required: "Password is required",
                         minLength: {
-                          value: 6,
-                          message: "Password must be at least 6 characters",
+                          value: 8,
+                          message: "Password must be at least 8 characters",
                         },
-                        // pattern: {
-                        //   value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
-                        //   message:
-                        //     "Password must contain at least one letter and one number",
-                        // },
+                        maxLength: {
+                          value: 32,
+                          message: "Password must not exceed 32 characters",
+                        },
+                        validate: {
+                          hasUpperCase: (value) =>
+                            /[A-Z]/.test(value) ||
+                            "Must contain at least one uppercase letter",
+                          hasLowerCase: (value) =>
+                            /[a-z]/.test(value) ||
+                            "Must contain at least one lowercase letter",
+                          hasNumber: (value) =>
+                            /[0-9]/.test(value) ||
+                            "Must contain at least one number",
+                          hasSpecialChar: (value) =>
+                            /[!@#$%^&*(),.?":{}|<>]/.test(value) ||
+                            "Must contain at least one special character",
+                          noSpaces: (value) =>
+                            !/\s/.test(value) ||
+                            "Password cannot contain spaces",
+                        },
                       })}
-                      type="password"
-                      placeholder="••••••••"
-                      className={`w-full ${
-                        errors.password ? "border-red-500" : ""
-                      }`}
+                      placeholder="Enter your password"
                     />
                     {errors.password && (
-                      <p className="text-red-500 text-xs mt-1">
+                      <p className="text-red-500 text-sm mt-1">
                         {errors.password.message}
                       </p>
                     )}

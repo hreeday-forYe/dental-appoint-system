@@ -99,8 +99,28 @@ const Register = () => {
                   {...register("password", {
                     required: "Password is required",
                     minLength: {
-                      value: 6,
-                      message: "Password must be at least 6 characters",
+                      value: 8,
+                      message: "Password must be at least 8 characters",
+                    },
+                    maxLength: {
+                      value: 32,
+                      message: "Password must not exceed 32 characters",
+                    },
+                    validate: {
+                      hasUpperCase: (value) =>
+                        /[A-Z]/.test(value) ||
+                        "Must contain at least one uppercase letter",
+                      hasLowerCase: (value) =>
+                        /[a-z]/.test(value) ||
+                        "Must contain at least one lowercase letter",
+                      hasNumber: (value) =>
+                        /[0-9]/.test(value) ||
+                        "Must contain at least one number",
+                      hasSpecialChar: (value) =>
+                        /[!@#$%^&*(),.?":{}|<>]/.test(value) ||
+                        "Must contain at least one special character",
+                      noSpaces: (value) =>
+                        !/\s/.test(value) || "Password cannot contain spaces",
                     },
                   })}
                   placeholder="Enter your password"
@@ -142,7 +162,7 @@ const Register = () => {
                 Already have an account?{" "}
                 <span
                   className="text-blue-500 cursor-pointer"
-                  onClick={() =>  navigate(`/login?redirect=${redirect}`)}
+                  onClick={() => navigate(`/login?redirect=${redirect}`)}
                 >
                   Login
                 </span>

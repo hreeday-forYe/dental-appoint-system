@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account Reinstatement - Smile Sync</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f8ff;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .notification-container {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        width: 90%;
+        max-width: 500px;
+      }
+      h1 {
+        color: #155724;
+        background-color: #d4edda;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        font-size: 26px;
+      }
+      .important-note {
+        font-size: 18px;
+        color: #0c5460;
+        margin: 20px 0;
+        font-weight: bold;
+      }
+      p {
+        color: #555;
+        line-height: 1.6;
+      }
+      .info {
+        color: #6c757d;
+        margin-bottom: 20px;
+      }
+      .btn {
+        display: inline-block;
+        padding: 12px 25px;
+        background-color: #28a745;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+        margin-top: 15px;
+      }
+      .btn:hover {
+        background-color: #218838;
+      }
+      .footer {
+        margin-top: 20px;
+        font-size: 14px;
+        color: #888;
+      }
+      .success-icon {
+        font-size: 50px;
+        color: #28a745;
+        margin-bottom: 20px;
+      }
+      ul {
+        text-align: left;
+        color: #555;
+        padding-left: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="notification-container">
+      <div class="success-icon">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="64"
+          height="64"
+          fill="currentColor"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"
+          />
+        </svg>
+      </div>
+
+      <h1>Account Reinstatement Notice</h1>
+      <p>Hello <%= userName %>,</p>
+      <p>
+        We're pleased to inform you that your Smile Sync account has been
+        reinstated after careful review.
+      </p>
+
+      <div class="important-note">
+        Your full account access has been restored!
+      </div>
+
+      <p class="info">
+        Our team has completed the review process and determined that your
+        account can be restored. We appreciate your patience and understanding
+        during this process.
+      </p>
+
+      <p>With this reinstatement:</p>
+      <ul>
+        <li>You can now log in to your account normally</li>
+        <li>All account features have been restored</li>
+        <li>You may resume using our services</li>
+      </ul>
+
+      <p>
+        We welcome you back to Smile Sync and encourage you to review our
+        <a href="https://www.smilesync.com/terms" style="color: #28a745"
+          >Terms of Service</a
+        >
+        to ensure continued positive experience for all users.
+      </p>
+
+      <a href="https://www.smilesync.com/login" class="btn"
+        >Login to Your Account</a
+      >
+
+      <div class="footer">
+        <p>Welcome back,</p>
+        <p>The Smile Sync Team</p>
+      </div>
+    </div>
+  </body>
+</html>
