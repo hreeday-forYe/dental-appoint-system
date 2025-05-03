@@ -3,6 +3,7 @@ import Dentist from "../models/dentistModel.js";
 import Appointment from "../models/appointmentModel.js";
 import User from "../models/userModel.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
+import mongoose from "mongoose";
 class DentistController {
   // ****************** DENTIST AUTHENTICATION MANAGEMENT ***************
   static registerDentist = asyncHandler(async (req, res, next) => {
@@ -287,6 +288,137 @@ class DentistController {
         success: true,
         message: "Profile fetched Successfully",
         dentist,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
+
+  static updateDentistProfile = asyncHandler(async (req, res, next) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+      const {
+        name,
+        email,
+        phone,
+        address,
+        bio,
+        consultingFee,
+        endTime,
+        experience,
+        nmcNumber,
+        qualifications,
+        slotDuration,
+        specialization,
+        startTime,
+        workingDays,
+      } = req.body;
+
+      // Update User model data
+      const userUpdates = {
+        name,
+        email,
+        phone,
+        address,
+      };
+
+      // Update Dentist model data
+      const dentistUpdates = {
+        specialization,
+        experience,
+        nmcNumber,
+        qualifications,
+        consultingFee,
+        slotDuration,
+        bio,
+        workingHours: {
+          startTime,
+          endTime,
+          days: workingDays,
+        },
+        firstLogin: false, // Set to false after first profile update
+      };
+
+      // Execute updates in transaction
+      const [updatedUser, updatedDentist] = await Promise.all([
+        User.findByIdAndUpdate(req.user._id, userUpdates, {
+          new: true,
+          runValidators: true,
+          session,
+        }),
+        Dentist.findOneAndUpdate({ user: req.user._id }, dentistUpdates, {
+          new: true,
+          runValidators: true,
+          session,
+        }),
+      ]);
+
+      if (!updatedUser || !updatedDentist) {
+        throw new Error("Failed to update profile");
+      }
+
+      await session.commitTransaction();
+      session.endSession();
+
+      return res.status(200).json({
+        success: true,
+        message: "Profile updated successfully",
+      });
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
+
+  // FETCH DENTIST PATIENTS
+  static fetchPatients = asyncHandler(async (req, res, next) => {
+    try {
+      const userId = req.user._id;
+
+      // 1. First find the dentist document for the logged-in user
+      const dentist = await Dentist.findOne({ user: userId });
+      if (!dentist) {
+        return next(new ErrorHandler("Dentist not found", 404));
+      }
+
+      // 2. Find all appointments for this dentist and populate user details
+      const appointments = await Appointment.find({ dentist: dentist._id })
+        .populate({
+          path: "user", // This matches your Appointment schema field name
+          select: "name email phone avatar role",
+        })
+        .sort({ date: -1 });
+
+      // 3. Filter and format the data
+      const patients = [];
+      const patientIds = new Set(); // To track unique patients
+
+      appointments.forEach((appointment) => {
+        if (appointment.user && appointment.user.role === "user") {
+          // Ensure it's a patient
+          const userId = appointment.user._id.toString();
+
+          if (!patientIds.has(userId)) {
+            patientIds.add(userId);
+            patients.push({
+              _id: userId,
+              name: appointment.user.name,
+              email: appointment.user.email,
+              phone: appointment.user.phone || "Not provided",
+              avatar: appointment.user.avatar?.url || null,
+              lastAppointment: appointment.date.toISOString().split("T")[0],
+            });
+          }
+        }
+      });
+
+      res.status(200).json({
+        success: true,
+        count: patients.length,
+        data: patients,
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));

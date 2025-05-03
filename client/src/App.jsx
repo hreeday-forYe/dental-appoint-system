@@ -8,7 +8,7 @@ function App() {
     location.pathname === "/register" ||
     location.pathname === "/register-success" ||
     location.pathname === "/activate" ||
-    location.pathname === "/register-as-dentist" 
+    location.pathname === "/register-as-dentist";
   return (
     <>
       {!isAuthPath && <Header />}
@@ -19,8 +19,6 @@ function App() {
           </main>
         </div>
       </div>
-      {!isAuthPath && <Footer />}
-
       <ToastContainer
         position="top-right"
         autoClose={1000}
@@ -34,6 +32,7 @@ function App() {
         theme="colored"
         transition={Bounce}
       />
+      {!isAuthPath && <Footer />}
     </>
   );
 }

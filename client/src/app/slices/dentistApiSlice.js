@@ -41,7 +41,7 @@ export const dentistApiSlice = apiSlice.injectEndpoints({
     }),
     getPatientsData: builder.query({
       query: () => ({
-        url: `${dentist_url}/patients`,
+        url: `${dentist_url}/get-patients`,
         method: "GET",
         credentials: "include",
       }),
@@ -52,7 +52,15 @@ export const dentistApiSlice = apiSlice.injectEndpoints({
         method: "GET",
         credentials: "include",
       }),
-    })
+    }),
+    updateDentistProfile: builder.mutation({
+      query: (data) => ({
+        url: `${dentist_url}/update-dentist-profile`,
+        method: "PUT",
+        body: data,
+        credentials: "include",
+      }),
+    }),
   }),
 });
 
@@ -63,5 +71,6 @@ export const {
   useGetSingleDentistQuery,
   useFetchDentistAppointmentsQuery,
   useGetPatientsDataQuery,
-  useGetDentistProfileQuery
+  useGetDentistProfileQuery,
+  useUpdateDentistProfileMutation
 } = dentistApiSlice;
